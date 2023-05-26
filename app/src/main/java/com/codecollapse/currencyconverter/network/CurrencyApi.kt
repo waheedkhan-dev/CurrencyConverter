@@ -14,23 +14,4 @@ interface CurrencyApi {
         @Query("apikey") api_key: String,
         @Query("base") baseCurrency: String
     ): Response<ExchangeRate>
-
-    /*  @GET("games")
-      suspend fun getGames(
-          @Query("key") api_key : String,
-          @Query("page") page : Int,
-          @Query("page_size") page_size : Int
-      ) : Response<GamesClass>
-
-      @GET("genres")
-      suspend fun getGamesCategories(
-          @Query("key") api_key : String,
-          @Query("page") page : Int
-      ) : Response<GameGenres>
-
-      @GET("games?ordering")
-      suspend fun getTrendingGames(
-          @Query("key") api_key: String,
-          @Query("dates") page : String
-      ) : Response<GamesClass>*/
 }
