@@ -1,4 +1,4 @@
-package com.codecollapse.currencyconverter.core.ui
+package com.codecollapse.currencyconverter.core.ui.exchange
 
 import com.codecollapse.currencyconverter.data.model.exchangeRate.ExchangeRate
 

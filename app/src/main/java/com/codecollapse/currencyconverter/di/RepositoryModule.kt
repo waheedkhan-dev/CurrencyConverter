@@ -1,8 +1,10 @@
 package com.codecollapse.currencyconverter.di
 
 import android.content.Context
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.codecollapse.currencyconverter.data.repository.CountryRepository
 import com.codecollapse.currencyconverter.data.repository.exchange.ExchangeRateRepositoryImpl
+import com.codecollapse.currencyconverter.data.repository.rate.RateConverterRepositoryImpl
 import com.codecollapse.currencyconverter.network.CurrencyApi
 import com.codecollapse.currencyconverter.source.datastore.DataStoreRepository
 import com.codecollapse.currencyconverter.source.local.dao.ExchangeRateDao
@@ -11,6 +13,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.first
 import javax.inject.Singleton
 
 @Module
@@ -32,6 +35,17 @@ object RepositoryModule {
         currencyApi: CurrencyApi,
         exchangeRateDao: ExchangeRateDao
     ): ExchangeRateRepositoryImpl {
-        return ExchangeRateRepositoryImpl(currencyApi = currencyApi, exchangeRateDao = exchangeRateDao)
+        return ExchangeRateRepositoryImpl(
+            currencyApi = currencyApi,
+            exchangeRateDao = exchangeRateDao
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideRateConverterRepository(
+        currencyApi: CurrencyApi
+    ): RateConverterRepositoryImpl {
+        return RateConverterRepositoryImpl(currencyApi)
     }
 }

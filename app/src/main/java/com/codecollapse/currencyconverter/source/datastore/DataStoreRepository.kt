@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.codecollapse.currencyconverter.source.datastore.DataStoreRepository.PreferencesKey.AMOUNT
 import com.codecollapse.currencyconverter.source.datastore.DataStoreRepository.PreferencesKey.DEFAULT_BASE_CURRENCY
 import com.codecollapse.currencyconverter.source.datastore.DataStoreRepository.PreferencesKey.DEFAULT_TARGET_CURRENCY
 import com.codecollapse.currencyconverter.source.datastore.DataStoreRepository.PreferencesKey.IS_DEVICE_SYNC_WITH_API
@@ -20,6 +22,7 @@ class DataStoreRepository @Inject constructor(private val context: Context) {
         val DEFAULT_BASE_CURRENCY = stringPreferencesKey("defaultBaseCurrency")
         val DEFAULT_TARGET_CURRENCY = stringPreferencesKey("defaultTargetCurrency")
         val IS_DEVICE_SYNC_WITH_API = booleanPreferencesKey("isDeviceSyncWithAPI")
+        val AMOUNT = intPreferencesKey("amount")
     }
 
     private val Context.dataStore by preferencesDataStore(name = "CurrencyConverterPreferences")
@@ -33,6 +36,12 @@ class DataStoreRepository @Inject constructor(private val context: Context) {
     suspend fun setTargetCurrency(targetCurrency: String) {
         context.dataStore.edit { pref ->
             pref[DEFAULT_TARGET_CURRENCY] = targetCurrency
+        }
+    }
+
+    suspend fun setAmount(amount: Int) {
+        context.dataStore.edit { pref ->
+            pref[AMOUNT] = amount
         }
     }
 
@@ -70,6 +79,16 @@ class DataStoreRepository @Inject constructor(private val context: Context) {
             }
         }.map { preference ->
             val name = preference[IS_DEVICE_SYNC_WITH_API] ?: false
+            name
+        }
+
+    val getAmount: Flow<Int> = context.dataStore.data
+        .catch {
+            if (this is Exception) {
+                emit(emptyPreferences())
+            }
+        }.map { preference ->
+            val name = preference[AMOUNT] ?: 500
             name
         }
 }

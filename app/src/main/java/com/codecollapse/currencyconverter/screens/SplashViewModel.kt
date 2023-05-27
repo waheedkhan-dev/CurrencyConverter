@@ -24,7 +24,7 @@ class SplashViewModel @Inject constructor(
     ViewModel() {
 
     private val _isDeviceSync =
-        MutableStateFlow(runBlocking { dataStoreRepository.getIsDeviceSync.first() })
+        MutableStateFlow( runBlocking { dataStoreRepository.getIsDeviceSync.first() })
     val isDeviceSync = _isDeviceSync.asStateFlow()
 
     init {
