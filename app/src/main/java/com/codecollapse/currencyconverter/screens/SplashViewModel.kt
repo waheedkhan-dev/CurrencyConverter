@@ -3,7 +3,8 @@ package com.codecollapse.currencyconverter.screens
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codecollapse.currencyconverter.data.repository.exchange.ExchangeRateRepositoryImpl
-import com.codecollapse.currencyconverter.source.datastore.DataStoreRepository
+import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepository
+import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl
 import com.codecollapse.currencyconverter.utils.Constants
 import com.codecollapse.currencyconverter.utils.Resource
 import com.codecollapse.currencyconverter.utils.asResource
@@ -19,12 +20,12 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val exchangeRateRepositoryImpl: ExchangeRateRepositoryImpl,
-    private val dataStoreRepository: DataStoreRepository
+    private val dataStoreRepository: DataStoreRepositoryImpl
 ) :
     ViewModel() {
 
     private val _isDeviceSync =
-        MutableStateFlow( runBlocking { dataStoreRepository.getIsDeviceSync.first() })
+        MutableStateFlow( runBlocking { dataStoreRepository.getIsDeviceSync().getOrNull()!! })
     val isDeviceSync = _isDeviceSync.asStateFlow()
 
     init {
@@ -32,7 +33,7 @@ class SplashViewModel @Inject constructor(
     }
 
     private fun syncDevice() {
-        val baseCurrency = runBlocking { dataStoreRepository.getBaseCurrency.first() }
+        val baseCurrency = runBlocking { dataStoreRepository.getBaseCurrency().getOrNull().orEmpty() }
         if (isDeviceSync.value.not()) {
             viewModelScope.launch {
                 exchangeRateRepositoryImpl.getLatestExchangeRates(

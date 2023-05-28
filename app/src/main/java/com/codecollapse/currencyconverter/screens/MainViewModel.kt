@@ -3,8 +3,8 @@ package com.codecollapse.currencyconverter.screens
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codecollapse.currencyconverter.core.ui.convert.RateConverterUiState
+import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl
 import com.codecollapse.currencyconverter.data.repository.rate.RateConverterRepositoryImpl
-import com.codecollapse.currencyconverter.source.datastore.DataStoreRepository
 import com.codecollapse.currencyconverter.utils.Constants
 import com.codecollapse.currencyconverter.utils.Resource
 import com.codecollapse.currencyconverter.utils.asResource
@@ -13,24 +13,21 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    dataStoreRepository: DataStoreRepository,
+    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
     rateConverterRepositoryImpl: RateConverterRepositoryImpl
 ) : ViewModel() {
-
-    /*    var from = runBlocking { dataStoreRepository.getBaseCurrency.first() }
-        var to = runBlocking { dataStoreRepository.getTargetCurrency.first() }
-        var amount = runBlocking { dataStoreRepository.getAmount.first() }*/
 
     val rateConverterUiState: StateFlow<RateConverterUiState> =
         rateConverterRepositoryImpl.rateConversion(
             api_key = Constants.API_KEY,
-            from = "PKR",
-            to = "USD",
-            amount = 500
+            from = runBlocking { dataStoreRepositoryImpl.getBaseCurrency().getOrNull().orEmpty() },
+            to = runBlocking { dataStoreRepositoryImpl.getTargetCurrency().getOrNull().orEmpty() },
+            amount =  runBlocking { dataStoreRepositoryImpl.getAmount().getOrNull()!! }
         ).asResource().map {
             when (it) {
                 is Resource.Success -> {

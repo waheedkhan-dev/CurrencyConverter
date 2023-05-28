@@ -2,7 +2,6 @@ package com.codecollapse.currencyconverter.data.repository.rate
 
 import com.codecollapse.currencyconverter.data.model.rateConverter.RateConverter
 import com.codecollapse.currencyconverter.network.CurrencyApi
-import com.codecollapse.currencyconverter.source.datastore.DataStoreRepository
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

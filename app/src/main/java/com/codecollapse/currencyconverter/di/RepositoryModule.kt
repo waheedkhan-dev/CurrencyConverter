@@ -1,19 +1,17 @@
 package com.codecollapse.currencyconverter.di
 
-import android.content.Context
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.codecollapse.currencyconverter.data.repository.CountryRepository
+import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl
 import com.codecollapse.currencyconverter.data.repository.exchange.ExchangeRateRepositoryImpl
 import com.codecollapse.currencyconverter.data.repository.rate.RateConverterRepositoryImpl
 import com.codecollapse.currencyconverter.network.CurrencyApi
-import com.codecollapse.currencyconverter.source.datastore.DataStoreRepository
 import com.codecollapse.currencyconverter.source.local.dao.ExchangeRateDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.flow.first
 import javax.inject.Singleton
 
 @Module
@@ -25,9 +23,11 @@ object RepositoryModule {
         return CountryRepository()
     }
 
+    @Singleton
     @Provides
-    fun provideDataStoreRepository(@ApplicationContext context: Context) =
-        DataStoreRepository(context)
+    fun provideDataStoreRepository(dataStore: DataStore<Preferences>): DataStoreRepositoryImpl {
+        return DataStoreRepositoryImpl(ccDataStore = dataStore)
+    }
 
     @Singleton
     @Provides
