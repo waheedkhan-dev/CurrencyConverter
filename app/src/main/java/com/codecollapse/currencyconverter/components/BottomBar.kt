@@ -11,6 +11,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.codecollapse.currencyconverter.navigation.BottomBarDestination
 
@@ -18,8 +19,7 @@ import com.codecollapse.currencyconverter.navigation.BottomBarDestination
 @Composable
 fun BottomBar(
     navController: NavHostController,
-    currentDestination: NavDestination?,
-    isDarkTheme: Boolean
+    currentDestination: NavDestination?
 ) {
 
     val screens = listOf(
@@ -65,18 +65,21 @@ fun RowScope.BottomItem(
                 contentDescription = null
             )
         },
-        selected = currentDestination?.hierarchy?.any {
-            it.route == screen.route
-        } ?: false,
+        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
         // unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
         onClick = {
-            screen.route.let {
-                navController.navigate(it) {
-                    popUpTo(screen.route) {
-                        inclusive = true
-                    }
-                    launchSingleTop = true
+            navController.navigate(screen.route) {
+                // Pop up to the start destination of the graph to
+                // avoid building up a large stack of destinations
+                // on the back stack as users select items
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
                 }
+                // Avoid multiple copies of the same destination when
+                // reselecting the same item
+                launchSingleTop = true
+                // Restore state when reselecting a previously selected item
+                restoreState = true
             }
             /* navController.navigate(screen.route) {
                  popUpTo(navController.graph.findStartDestination().id)

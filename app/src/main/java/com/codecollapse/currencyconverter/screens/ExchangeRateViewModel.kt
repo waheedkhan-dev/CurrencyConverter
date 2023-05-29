@@ -1,17 +1,19 @@
 package com.codecollapse.currencyconverter.screens
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codecollapse.currencyconverter.core.ui.convert.RateConverterUiState
+import com.codecollapse.currencyconverter.data.model.rateConverter.UpdatedRate
 import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl
 import com.codecollapse.currencyconverter.data.repository.rate.RateConverterRepositoryImpl
 import com.codecollapse.currencyconverter.utils.Constants
 import com.codecollapse.currencyconverter.utils.Resource
 import com.codecollapse.currencyconverter.utils.asResource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -24,15 +26,11 @@ class ExchangeRateViewModel @Inject constructor(
     private val rateConverterRepositoryImpl: RateConverterRepositoryImpl
 ) : ViewModel() {
 
-    val defaultAmountState =
-        mutableStateOf(runBlocking { dataStoreRepositoryImpl.getAmount().getOrNull()!! })
-    val toAmountState = mutableStateOf(0.0)
+    private val _updatedRateState = MutableStateFlow(
+        UpdatedRate()
+    )
 
-    private var defaultFrom =
-        runBlocking { dataStoreRepositoryImpl.getBaseCurrency().getOrNull().orEmpty() }
-    private var defaultTo =
-        runBlocking { dataStoreRepositoryImpl.getTargetCurrency().getOrNull().orEmpty() }
-    private var defaultAmount = runBlocking { dataStoreRepositoryImpl.getAmount().getOrNull()!! }
+    var updatedRate: StateFlow<UpdatedRate> = _updatedRateState.asStateFlow()
 
     val rateConverterUiState: StateFlow<RateConverterUiState> =
         rateConverterRepositoryImpl.rateConversion(
@@ -43,8 +41,7 @@ class ExchangeRateViewModel @Inject constructor(
         ).asResource().map {
             when (it) {
                 is Resource.Success -> {
-                    defaultAmountState.value = it.data.query.amount
-                    toAmountState.value = it.data.result
+                    _updatedRateState.value = it.data
                     RateConverterUiState.Success(
                         rateConverter = it.data
                     )
@@ -74,10 +71,7 @@ class ExchangeRateViewModel @Inject constructor(
             ).asResource().collect {
                 when (it) {
                     is Resource.Success -> {
-                        defaultAmountState.value = it.data.query.amount
-                        toAmountState.value = it.data.result
-                     //   RateConverterUiState.Success(rateConverter = it.data)
-
+                        _updatedRateState.value = it.data
                     }
 
                     is Resource.Loading -> {
@@ -91,5 +85,4 @@ class ExchangeRateViewModel @Inject constructor(
             }
         }
     }
-
 }

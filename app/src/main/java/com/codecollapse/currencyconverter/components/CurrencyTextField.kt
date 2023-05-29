@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,15 +40,17 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.codecollapse.currencyconverter.R
 import com.codecollapse.currencyconverter.core.DestinationRoute
+import com.codecollapse.currencyconverter.data.model.rateConverter.UpdatedRate
 import com.codecollapse.currencyconverter.screens.ExchangeRateViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RateConvertComposable(
     navController: NavController,
-    countrySymbol: String, _result: Int, exchangeRateViewModel: ExchangeRateViewModel
+    updatedRate: UpdatedRate, exchangeRateViewModel: ExchangeRateViewModel
 ) {
     val focusManager = LocalFocusManager.current
-    var value by remember { mutableStateOf("") }
+    var updatedValue by remember { mutableStateOf(updatedRate.amount.toString()) }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -62,7 +66,7 @@ fun RateConvertComposable(
 
             Box(
                 modifier = Modifier.clickable {
-                    navController.navigate(DestinationRoute.COUNTRY_SCREEN_ROUTE)
+                    navController.navigate(DestinationRoute.CURRENCY_SCREEN_ROUTE)
                 }
             ) {
                 Row() {
@@ -77,7 +81,7 @@ fun RateConvertComposable(
                             .border(0.5.dp, color = Color.LightGray, CircleShape)
                     )
                     Text(
-                        text = countrySymbol,
+                        text = updatedRate.from,
                         modifier = Modifier
                             .align(alignment = Alignment.CenterVertically)
                             .padding(start = 8.dp),
@@ -99,9 +103,9 @@ fun RateConvertComposable(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .weight(1f),
-                value = value,
+                value = updatedValue,//_//result.toString(),
                 onValueChange = {
-                    value = it
+                    updatedValue = it
                 },
                 textStyle = TextStyle(textAlign = TextAlign.End),
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -109,7 +113,7 @@ fun RateConvertComposable(
                     keyboardType = KeyboardType.Number
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    exchangeRateViewModel.updateRates("PKR", "USD", value.toInt())
+                    exchangeRateViewModel.updateRates("PKR", "USD", updatedValue.toInt())
                     focusManager.clearFocus()
                 })
             )
@@ -118,6 +122,76 @@ fun RateConvertComposable(
                   Text(modifier = Modifier.align(Alignment.End), text = "$0.21")
                   Text(modifier = Modifier.align(Alignment.End), text = "1 PKR = 0.0035 USD")
               }*/
+        }
+    }
+}
+
+
+@Composable
+fun ToRateConvertComposable(
+    navController: NavController,
+    updatedRate: UpdatedRate
+) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp)
+            .wrapContentHeight()
+            .border(1.dp, Color.LightGray, RoundedCornerShape(4.dp))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ) {
+
+            Box(
+                modifier = Modifier.clickable {
+                    navController.navigate(DestinationRoute.CURRENCY_SCREEN_ROUTE)
+                }
+            ) {
+                Row() {
+                    Image(
+                        painter = painterResource(id = R.drawable.pk),
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .size(18.dp)
+                            .clip(CircleShape)
+                            .border(0.5.dp, color = Color.LightGray, CircleShape)
+                    )
+                    Text(
+                        text = updatedRate.to,
+                        modifier = Modifier
+                            .align(alignment = Alignment.CenterVertically)
+                            .padding(start = 8.dp),
+                        style = TextStyle(
+                            textAlign = TextAlign.Center,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Light
+                        )
+                    )
+                    Icon(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        painter = painterResource(id = R.drawable.round_keyboard_arrow_down_24),
+                        contentDescription = "arrow_down",
+                        tint = Color.LightGray
+                    )
+                }
+            }
+
+            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
+                Text(
+                    modifier = Modifier.align(Alignment.End),
+                    text = updatedRate.result.toString()
+                )
+                Text(
+                    modifier = Modifier.align(Alignment.End),
+                    text = "1 ${updatedRate.from} = ${updatedRate.rate} ${updatedRate.to}"
+                )
+            }
         }
     }
 }
