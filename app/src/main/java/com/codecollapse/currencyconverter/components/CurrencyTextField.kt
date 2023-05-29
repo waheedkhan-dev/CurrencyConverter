@@ -1,11 +1,9 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.codecollapse.currencyconverter.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,46 +35,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.codecollapse.currencyconverter.R
-import com.codecollapse.currencyconverter.core.ui.convert.RateConverterUiState
-import com.codecollapse.currencyconverter.data.model.rateConverter.RateConverter
-import com.codecollapse.currencyconverter.screens.MainViewModel
+import com.codecollapse.currencyconverter.core.DestinationRoute
+import com.codecollapse.currencyconverter.screens.ExchangeRateViewModel
 
 @Composable
-fun CurrencyTextField(
-    modifier: Modifier = Modifier,
-    mainViewModel: MainViewModel = viewModel()
+fun RateConvertComposable(
+    navController: NavController,
+    countrySymbol: String, _result: Int, exchangeRateViewModel: ExchangeRateViewModel
 ) {
-    val rateConverterUiState by mainViewModel.rateConverterUiState.collectAsStateWithLifecycle()
-    when (rateConverterUiState) {
-        RateConverterUiState.Loading -> {
-        }
-
-        is RateConverterUiState.Success -> {
-            RateConvertComposable(
-                rateConverter = (rateConverterUiState as RateConverterUiState.Success).rateConverter,
-                mainViewModel = mainViewModel
-            )
-            ToRateConverterComposable(rateConverter = (rateConverterUiState as RateConverterUiState.Success).rateConverter)
-        }
-
-        RateConverterUiState.Error -> {
-
-        }
-    }
-}
-
-@Composable
-fun RateConvertComposable(rateConverter: RateConverter, mainViewModel: MainViewModel) {
     val focusManager = LocalFocusManager.current
-    var value by remember {
-        mutableStateOf(rateConverter.query.amount.toString())
-    }
-    var isDonePress by remember {
-        mutableStateOf(false)
-    }
+    var value by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -90,34 +59,42 @@ fun RateConvertComposable(rateConverter: RateConverter, mainViewModel: MainViewM
                 .fillMaxWidth()
                 .padding(12.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.pk),
-                contentDescription = "",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .size(18.dp)
-                    .clip(CircleShape)
-                    .border(0.5.dp, color = Color.LightGray, CircleShape)
-            )
-            Text(
-                text = rateConverter.query.from,//stringResource(R.string.pkr),
-                modifier = Modifier
-                    .align(alignment = Alignment.CenterVertically)
-                    .padding(start = 8.dp),
-                style = TextStyle(
-                    textAlign = TextAlign.Center,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Light
-                )
-            )
-            Icon(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                painter = painterResource(id = R.drawable.round_keyboard_arrow_down_24),
-                contentDescription = "arrow_down",
-                tint = Color.LightGray
-            )
 
+            Box(
+                modifier = Modifier.clickable {
+                    navController.navigate(DestinationRoute.COUNTRY_SCREEN_ROUTE)
+                }
+            ) {
+                Row() {
+                    Image(
+                        painter = painterResource(id = R.drawable.pk),
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .size(18.dp)
+                            .clip(CircleShape)
+                            .border(0.5.dp, color = Color.LightGray, CircleShape)
+                    )
+                    Text(
+                        text = countrySymbol,
+                        modifier = Modifier
+                            .align(alignment = Alignment.CenterVertically)
+                            .padding(start = 8.dp),
+                        style = TextStyle(
+                            textAlign = TextAlign.Center,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Light
+                        )
+                    )
+                    Icon(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        painter = painterResource(id = R.drawable.round_keyboard_arrow_down_24),
+                        contentDescription = "arrow_down",
+                        tint = Color.LightGray
+                    )
+                }
+            }
             BasicTextField(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
@@ -132,7 +109,7 @@ fun RateConvertComposable(rateConverter: RateConverter, mainViewModel: MainViewM
                     keyboardType = KeyboardType.Number
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    isDonePress = true
+                    exchangeRateViewModel.updateRates("PKR", "USD", value.toInt())
                     focusManager.clearFocus()
                 })
             )
@@ -144,60 +121,4 @@ fun RateConvertComposable(rateConverter: RateConverter, mainViewModel: MainViewM
         }
     }
 }
-
-@Composable
-fun ToRateConverterComposable(rateConverter: RateConverter) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp)
-            .wrapContentHeight()
-            .border(1.dp, Color.LightGray, RoundedCornerShape(4.dp))
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.pk),
-                contentDescription = "",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .size(18.dp)
-                    .clip(CircleShape)
-                    .border(0.5.dp, color = Color.LightGray, CircleShape)
-            )
-            Text(
-                text = rateConverter.query.to,
-                modifier = Modifier
-                    .align(alignment = Alignment.CenterVertically)
-                    .padding(start = 8.dp),
-                style = TextStyle(
-                    textAlign = TextAlign.Center,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Light
-                )
-            )
-            /* Icon(
-                 modifier = Modifier.align(Alignment.CenterVertically),
-                 painter = painterResource(id = R.drawable.round_keyboard_arrow_down_24),
-                 contentDescription = "arrow_down",
-                 tint = Color.LightGray
-             )*/
-            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
-                Text(
-                    modifier = Modifier.align(Alignment.End),
-                    text = rateConverter.result.toString()
-                )
-                Text(
-                    modifier = Modifier.align(Alignment.End),
-                    text = "1 ${rateConverter.query.to} = ${rateConverter.info.rate} ${rateConverter.query.from}"
-                )
-            }
-        }
-    }
-}
-
 

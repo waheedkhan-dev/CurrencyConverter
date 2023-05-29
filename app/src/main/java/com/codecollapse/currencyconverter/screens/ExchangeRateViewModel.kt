@@ -1,5 +1,6 @@
 package com.codecollapse.currencyconverter.screens
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codecollapse.currencyconverter.core.ui.convert.RateConverterUiState
@@ -13,24 +14,37 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class ExchangeRateViewModel @Inject constructor(
     private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
-    rateConverterRepositoryImpl: RateConverterRepositoryImpl
+    private val rateConverterRepositoryImpl: RateConverterRepositoryImpl
 ) : ViewModel() {
+
+    val defaultAmountState =
+        mutableStateOf(runBlocking { dataStoreRepositoryImpl.getAmount().getOrNull()!! })
+    val toAmountState = mutableStateOf(0.0)
+
+    private var defaultFrom =
+        runBlocking { dataStoreRepositoryImpl.getBaseCurrency().getOrNull().orEmpty() }
+    private var defaultTo =
+        runBlocking { dataStoreRepositoryImpl.getTargetCurrency().getOrNull().orEmpty() }
+    private var defaultAmount = runBlocking { dataStoreRepositoryImpl.getAmount().getOrNull()!! }
 
     val rateConverterUiState: StateFlow<RateConverterUiState> =
         rateConverterRepositoryImpl.rateConversion(
             api_key = Constants.API_KEY,
             from = runBlocking { dataStoreRepositoryImpl.getBaseCurrency().getOrNull().orEmpty() },
             to = runBlocking { dataStoreRepositoryImpl.getTargetCurrency().getOrNull().orEmpty() },
-            amount =  runBlocking { dataStoreRepositoryImpl.getAmount().getOrNull()!! }
+            amount = runBlocking { dataStoreRepositoryImpl.getAmount().getOrNull()!! }
         ).asResource().map {
             when (it) {
                 is Resource.Success -> {
+                    defaultAmountState.value = it.data.query.amount
+                    toAmountState.value = it.data.result
                     RateConverterUiState.Success(
                         rateConverter = it.data
                     )
@@ -50,10 +64,32 @@ class MainViewModel @Inject constructor(
             initialValue = RateConverterUiState.Loading
         )
 
+    fun updateRates(from: String, to: String, amount: Int) {
+        viewModelScope.launch {
+            rateConverterRepositoryImpl.rateConversion(
+                api_key = Constants.API_KEY,
+                from = from,
+                to = to,
+                amount = amount
+            ).asResource().collect {
+                when (it) {
+                    is Resource.Success -> {
+                        defaultAmountState.value = it.data.query.amount
+                        toAmountState.value = it.data.result
+                     //   RateConverterUiState.Success(rateConverter = it.data)
 
-    /*  fun updateRates(from : String,to : String,amount : Int){
-          viewModelScope.launch {
-              rateConverterRepositoryImpl.rateConversion(api_key = Constants.API_KEY, from = from, to = to,amount = amount).collect{}
-          }
-      }*/
+                    }
+
+                    is Resource.Loading -> {
+
+                    }
+
+                    is Resource.Error -> {
+
+                    }
+                }
+            }
+        }
+    }
+
 }
