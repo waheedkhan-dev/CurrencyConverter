@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,7 +42,7 @@ import com.codecollapse.currencyconverter.core.DestinationRoute
 import com.codecollapse.currencyconverter.data.model.rateConverter.UpdatedRate
 import com.codecollapse.currencyconverter.screens.ExchangeRateViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun RateConvertComposable(
     navController: NavController,
@@ -113,7 +112,7 @@ fun RateConvertComposable(
                     keyboardType = KeyboardType.Number
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    exchangeRateViewModel.updateRates("PKR", "USD", updatedValue.toInt())
+                    exchangeRateViewModel.updateRates(updatedRate.from, updatedRate.to, updatedValue.toInt())
                     focusManager.clearFocus()
                 })
             )
@@ -146,11 +145,7 @@ fun ToRateConvertComposable(
                 .padding(12.dp)
         ) {
 
-            Box(
-                modifier = Modifier.clickable {
-                    navController.navigate(DestinationRoute.CURRENCY_SCREEN_ROUTE)
-                }
-            ) {
+            Box {
                 Row() {
                     Image(
                         painter = painterResource(id = R.drawable.pk),
@@ -172,12 +167,6 @@ fun ToRateConvertComposable(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Light
                         )
-                    )
-                    Icon(
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                        painter = painterResource(id = R.drawable.round_keyboard_arrow_down_24),
-                        contentDescription = "arrow_down",
-                        tint = Color.LightGray
                     )
                 }
             }

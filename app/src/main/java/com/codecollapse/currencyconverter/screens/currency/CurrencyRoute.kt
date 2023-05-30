@@ -31,16 +31,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.ActivityNavigatorExtras
 import androidx.navigation.NavController
-import com.codecollapse.currencyconverter.core.DestinationRoute
 import com.codecollapse.currencyconverter.core.DestinationRoute.CONVERT_SCREEN_ROUTE
 import com.codecollapse.currencyconverter.core.ui.currency.CurrencyUiState
 import com.codecollapse.currencyconverter.data.model.currency.CommonCurrency
+import com.codecollapse.currencyconverter.data.model.currency.Currency
 
 @Composable
 fun CountryRoute(
@@ -65,10 +63,18 @@ fun CountryRoute(
                 val filteredList = state.filter { currency ->
                     currency.name.contains(searchQuery, ignoreCase = true)
                 }
-                if(filteredList.isEmpty().not()){
-                    CountryRow(currencyList = filteredList, navController = navController)
-                }else{
-                    CountryRow(currencyList = state.toList(),navController = navController)
+                if (filteredList.isEmpty().not()) {
+                    CountryRow(
+                        currencyList = filteredList,
+                        navController = navController,
+                        currencyViewModel
+                    )
+                } else {
+                    CountryRow(
+                        currencyList = state.toList(),
+                        navController = navController,
+                        currencyViewModel
+                    )
                 }
             }
 
@@ -81,9 +87,13 @@ fun CountryRoute(
 }
 
 @Composable
-fun CountryRow(currencyList : List<CommonCurrency>,navController: NavController) {
+fun CountryRow(
+    currencyList: List<CommonCurrency>,
+    navController: NavController,
+    currencyViewModel: CurrencyViewModel
+) {
     val listState = rememberLazyListState()
-    var selectedItem by remember{mutableStateOf( "")}
+    var selectedItem by remember { mutableStateOf("") }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = listState,
@@ -91,20 +101,35 @@ fun CountryRow(currencyList : List<CommonCurrency>,navController: NavController)
     ) {
 
         items(currencyList.size) {
-            Row(modifier = Modifier.fillMaxWidth().selectable(
-                selected = selectedItem == currencyList[it].name, onClick = {
-                    selectedItem = currencyList[it].name
-                }
-            )) {
-                if(selectedItem == currencyList[it].name){
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .selectable(
+                    selected = selectedItem == currencyList[it].name, onClick = {
+                        selectedItem = currencyList[it].name
+                    }
+                )) {
+                if (selectedItem == currencyList[it].name) {
                     Text(text = currencyList[it].name, color = Color.Red)
-                    navController.popBackStack(CONVERT_SCREEN_ROUTE,inclusive = false)
-                   /* navController.navigate(CONVERT_SCREEN_ROUTE){
-                        popUpTo(CONVERT_SCREEN_ROUTE){
-                            inclusive = true
-                        }
-                    }*/
-                }else{
+
+                    currencyViewModel.addCurrency(
+                        Currency(
+                            date = "",
+                            rate = 0.0,
+                            timestamp = 0,
+                            amount = 0,
+                            from = "",
+                            to = currencyList[it].code,
+                            result = 0.0,
+                            success = true
+                        )
+                    )
+                    navController.popBackStack(CONVERT_SCREEN_ROUTE, inclusive = false)
+                    /* navController.navigate(CONVERT_SCREEN_ROUTE){
+                         popUpTo(CONVERT_SCREEN_ROUTE){
+                             inclusive = true
+                         }
+                     }*/
+                } else {
                     Text(text = currencyList[it].name)
                 }
 

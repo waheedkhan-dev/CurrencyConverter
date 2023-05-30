@@ -8,6 +8,7 @@ import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRep
 import com.codecollapse.currencyconverter.data.repository.exchange.ExchangeRateRepositoryImpl
 import com.codecollapse.currencyconverter.data.repository.rate.RateConverterRepositoryImpl
 import com.codecollapse.currencyconverter.network.CurrencyApi
+import com.codecollapse.currencyconverter.source.local.dao.CurrencyDao
 import com.codecollapse.currencyconverter.source.local.dao.ExchangeRateDao
 import dagger.Module
 import dagger.Provides
@@ -21,8 +22,18 @@ import javax.inject.Singleton
 object RepositoryModule {
 
     @Provides
-    fun provideCountryRepository(@ApplicationContext context : Context): CommonCurrencyRepository {
-        return CommonCurrencyRepository(context)
+    fun provideCountryRepository(
+        @ApplicationContext context: Context,
+        currencyDao: CurrencyDao,
+        exchangeRateRepositoryImpl: ExchangeRateRepositoryImpl,
+        dataStoreRepositoryImpl: DataStoreRepositoryImpl
+    ): CommonCurrencyRepository {
+        return CommonCurrencyRepository(
+            context,
+            currencyDao = currencyDao,
+            exchangeRateRepositoryImpl = exchangeRateRepositoryImpl,
+            dataStoreRepositoryImpl = dataStoreRepositoryImpl
+        )
     }
 
     @Singleton

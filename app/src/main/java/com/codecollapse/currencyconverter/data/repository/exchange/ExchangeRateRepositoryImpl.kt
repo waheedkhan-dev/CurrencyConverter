@@ -13,10 +13,18 @@ class ExchangeRateRepositoryImpl @Inject constructor(
     private val currencyApi: CurrencyApi,
     private val exchangeRateDao: ExchangeRateDao
 ) : ExchangeRateRepository {
-    override fun getLatestExchangeRates(api_key: String, baseCurrency: String): Flow<ExchangeRate> {
+    override fun getLatestExchangeRates(
+        api_key: String,
+        baseCurrency: String,
+        symbols: String
+    ): Flow<ExchangeRate> {
         return flow {
             val response =
-                currencyApi.getLatestExchangeRates(api_key = api_key, baseCurrency = baseCurrency)
+                currencyApi.getLatestExchangeRates(
+                    api_key = api_key,
+                    baseCurrency = baseCurrency,
+                    symbols = symbols
+                )
             if (response.isSuccessful) {
                 val exchangeRate = response.body()
                 exchangeRateDao.insertLatestExchangeRates(exchangeRate = exchangeRate!!)

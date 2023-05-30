@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface ExchangeRateRepository {
 
-    fun getLatestExchangeRates(api_key: String, baseCurrency: String): Flow<ExchangeRate>
+    fun getLatestExchangeRates(api_key: String, baseCurrency: String,symbols : String = ""): Flow<ExchangeRate>
 }

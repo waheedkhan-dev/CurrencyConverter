@@ -2,6 +2,7 @@ package com.codecollapse.currencyconverter.di
 
 import android.content.Context
 import androidx.room.Room
+import com.codecollapse.currencyconverter.source.local.dao.CurrencyDao
 import com.codecollapse.currencyconverter.source.local.dao.ExchangeRateDao
 import com.codecollapse.currencyconverter.source.local.database.CCAppDatabase
 import dagger.Module
@@ -28,7 +29,13 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideExchangeRateDao(pdfViewerAppDatabase: CCAppDatabase): ExchangeRateDao {
-        return pdfViewerAppDatabase.exchangeRateDao()
+    fun provideExchangeRateDao(ccAppDatabase: CCAppDatabase): ExchangeRateDao {
+        return ccAppDatabase.exchangeRateDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideCurrencyDao(ccAppDatabase: CCAppDatabase): CurrencyDao {
+        return ccAppDatabase.currencyDao()
     }
 }
