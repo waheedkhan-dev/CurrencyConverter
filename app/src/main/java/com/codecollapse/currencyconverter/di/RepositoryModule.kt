@@ -26,13 +26,15 @@ object RepositoryModule {
         @ApplicationContext context: Context,
         currencyDao: CurrencyDao,
         exchangeRateRepositoryImpl: ExchangeRateRepositoryImpl,
-        dataStoreRepositoryImpl: DataStoreRepositoryImpl
+        dataStoreRepositoryImpl: DataStoreRepositoryImpl,
+        currencyApi: CurrencyApi
     ): CommonCurrencyRepository {
         return CommonCurrencyRepository(
             context,
             currencyDao = currencyDao,
             exchangeRateRepositoryImpl = exchangeRateRepositoryImpl,
-            dataStoreRepositoryImpl = dataStoreRepositoryImpl
+            dataStoreRepositoryImpl = dataStoreRepositoryImpl,
+            currencyApi = currencyApi
         )
     }
 

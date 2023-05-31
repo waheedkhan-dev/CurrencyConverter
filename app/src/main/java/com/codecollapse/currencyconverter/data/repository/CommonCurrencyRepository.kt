@@ -4,8 +4,10 @@ import android.content.Context
 import com.codecollapse.currencyconverter.R
 import com.codecollapse.currencyconverter.data.model.currency.CommonCurrency
 import com.codecollapse.currencyconverter.data.model.currency.Currency
+import com.codecollapse.currencyconverter.data.model.currency.fluctuation.CurrencyFluctuation
 import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl
 import com.codecollapse.currencyconverter.data.repository.exchange.ExchangeRateRepositoryImpl
+import com.codecollapse.currencyconverter.network.CurrencyApi
 import com.codecollapse.currencyconverter.source.local.dao.CurrencyDao
 import com.codecollapse.currencyconverter.utils.Constants
 import com.google.gson.Gson
@@ -24,6 +26,7 @@ class CommonCurrencyRepository @Inject constructor(
     @ApplicationContext var context: Context,
     private val exchangeRateRepositoryImpl: ExchangeRateRepositoryImpl,
     private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
+    private val currencyApi: CurrencyApi,
     private val currencyDao: CurrencyDao
 ) {
 
@@ -36,6 +39,22 @@ class CommonCurrencyRepository @Inject constructor(
         emit(personArray)
     }.flowOn(IO)
 
+    fun checkFluctuation(
+        api_key: String,
+        baseCurrency: String,
+        symbols: String,
+        start_date: String,
+        end_date: String
+    ): Flow<CurrencyFluctuation> {
+        return flow {
+            val response =
+                currencyApi.checkFluctuation(api_key, baseCurrency, symbols, start_date, end_date)
+            if (response.isSuccessful) {
+                emit(response.body()!!)
+            }
+        }
+
+    }
 
     fun addCurrency(currency: Currency) {
         currencyDao.insertCurrency(currency = currency)
@@ -92,5 +111,11 @@ class CommonCurrencyRepository @Inject constructor(
             currency.result = currency.rate.times(amount)
         }
         return currencies
+    }
+
+    fun getCurrency(isFirst: Boolean): Flow<Currency> {
+        return flow {
+            emit(currencyDao.getCurrency(isFirst))
+        }.flowOn(IO)
     }
 }

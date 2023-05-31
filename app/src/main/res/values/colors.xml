@@ -14,4 +14,5 @@
     <color name="background_color">#44545C</color>
     <color name="welcome_color">#89B09B</color>
     <color name="light_green">#7CA591</color>
+    <color name="to_light_green">#A8D8B4</color>
 </resources>

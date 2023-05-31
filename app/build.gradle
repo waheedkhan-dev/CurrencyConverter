@@ -126,6 +126,10 @@ dependencies {
 
     //Coil for image loading
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    //Charts
+    implementation('io.github.bytebeats:compose-charts:0.1.2')
+  //  implementation "com.github.tehras:charts:0.2.4-alpha"
 }
 
 kapt {
