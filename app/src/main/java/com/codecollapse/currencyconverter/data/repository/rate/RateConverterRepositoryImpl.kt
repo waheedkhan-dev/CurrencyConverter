@@ -25,6 +25,8 @@ class RateConverterRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 val rateConverter = response.body()!!
                 val currency = Currency(
+                    name = "",
+                    symbol = "",
                     date = rateConverter.date,
                     rate = rateConverter.info.rate,
                     timestamp = rateConverter.info.timestamp,

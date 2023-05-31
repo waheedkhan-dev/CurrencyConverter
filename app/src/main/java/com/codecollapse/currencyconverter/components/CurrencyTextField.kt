@@ -1,6 +1,7 @@
 package com.codecollapse.currencyconverter.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -38,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.codecollapse.currencyconverter.R
-import com.codecollapse.currencyconverter.core.DestinationRoute
 import com.codecollapse.currencyconverter.data.model.rateConverter.UpdatedRate
 import com.codecollapse.currencyconverter.screens.ExchangeRateViewModel
 
@@ -46,8 +47,8 @@ import com.codecollapse.currencyconverter.screens.ExchangeRateViewModel
 @Composable
 fun RateConvertComposable(
     navController: NavController,
-    amount : Int,
-    fromCountry :String,
+    amount: Int,
+    fromCountry: String,
     exchangeRateViewModel: ExchangeRateViewModel
 ) {
     val focusManager = LocalFocusManager.current
@@ -56,8 +57,9 @@ fun RateConvertComposable(
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp)
+            .background(colorResource(id = R.color.welcome_color), RoundedCornerShape(12.dp))
             .wrapContentHeight()
-            .border(1.dp, Color.LightGray, RoundedCornerShape(4.dp))
+            .border(1.dp, colorResource(id = R.color.welcome_color), RoundedCornerShape(12.dp))
     ) {
         Row(
             modifier = Modifier
@@ -71,32 +73,41 @@ fun RateConvertComposable(
                 }
             ) {
                 Row() {
-                    Image(
-                        painter = painterResource(id = R.drawable.pk),
-                        contentDescription = "",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .size(18.dp)
-                            .clip(CircleShape)
-                            .border(0.5.dp, color = Color.LightGray, CircleShape)
-                    )
-                    Text(
-                        text = fromCountry,
-                        modifier = Modifier
-                            .align(alignment = Alignment.CenterVertically)
-                            .padding(start = 8.dp),
-                        style = TextStyle(
-                            textAlign = TextAlign.Center,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Light
+                    /*  Image(
+                          painter = painterResource(id = R.drawable.pk),
+                          contentDescription = "",
+                          contentScale = ContentScale.Crop,
+                          modifier = Modifier
+                              .align(Alignment.CenterVertically)
+                              .size(18.dp)
+                              .clip(CircleShape)
+                              .border(0.5.dp, color = Color.LightGray, CircleShape)
+                      )*/
+                    Column() {
+                        Text(
+                            text = fromCountry,
+                            style = TextStyle(
+                                textAlign = TextAlign.Center,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = colorResource(id = R.color.color_header_text)
+                            )
                         )
-                    )
+                        Text(
+                            text = fromCountry,
+                            style = TextStyle(
+                                textAlign = TextAlign.Center,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = colorResource(id = R.color.color_sub_text)
+                            )
+                        )
+                    }
                     Icon(
                         modifier = Modifier.align(Alignment.CenterVertically),
                         painter = painterResource(id = R.drawable.round_keyboard_arrow_down_24),
                         contentDescription = "arrow_down",
-                        tint = Color.LightGray
+                        tint = colorResource(id = R.color.color_sub_text)
                     )
                 }
             }
@@ -108,19 +119,32 @@ fun RateConvertComposable(
                 onValueChange = {
                     updatedValue = it
                 },
-                textStyle = TextStyle(textAlign = TextAlign.End),
+                textStyle = TextStyle(
+                    color = colorResource(id = R.color.color_header_text),
+                    textAlign = TextAlign.End,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
+                ),
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done,
                     keyboardType = KeyboardType.Number
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    if(updatedValue.isNotBlank()){
+                    if (updatedValue.isNotBlank()) {
                         exchangeRateViewModel.updateRates(updatedValue.toInt())
                         focusManager.clearFocus()
                     }
                 })
             )
 
+            Icon(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(4.dp),
+                painter = painterResource(id = R.drawable.calculator_),
+                contentDescription = "calculator",
+                tint = Color.LightGray
+            )
             /*  Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
                   Text(modifier = Modifier.align(Alignment.End), text = "$0.21")
                   Text(modifier = Modifier.align(Alignment.End), text = "1 PKR = 0.0035 USD")

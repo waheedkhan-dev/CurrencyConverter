@@ -67,6 +67,8 @@ class CommonCurrencyRepository @Inject constructor(
                 }
             } else {
                 val currency = Currency(
+                    name = "US Dollar",
+                    symbol = "$",
                     date = exchangeRate.date,
                     rate = exchangeRate.rates["USD"]!!,
                     timestamp = exchangeRate.timestamp,

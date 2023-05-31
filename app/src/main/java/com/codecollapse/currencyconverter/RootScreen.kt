@@ -36,12 +36,12 @@ fun RootScreen() {
 
         Scaffold(
             topBar = {
-                TopAppBar(
+                /*TopAppBar(
                     modifier = Modifier.fillMaxWidth(),
                     title = {
                         Text(text = stringResource(id = R.string.convert))
                     }
-                )
+                )*/
             },
             bottomBar = {
                 BottomBar(navController, currentDestination)

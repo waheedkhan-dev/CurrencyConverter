@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.codecollapse.currencyconverter.R
 import com.codecollapse.currencyconverter.core.DestinationRoute.CONVERT_SCREEN_ROUTE
-import com.codecollapse.currencyconverter.core.DestinationRoute.RATE_SCREEN_ROUTE
+import com.codecollapse.currencyconverter.core.DestinationRoute.CHART_SCREEN_ROUTE
 
 enum class BottomBarDestination(
     val route: String,
@@ -22,8 +22,8 @@ enum class BottomBarDestination(
     ),
 
     RATE(
-        route = RATE_SCREEN_ROUTE,
-        title = R.string.rate,
+        route = CHART_SCREEN_ROUTE,
+        title = R.string.chart,
         unFilledIcon = R.drawable.outline_timeline_24,
         filledIcon = R.drawable.outline_timeline_24
     ),

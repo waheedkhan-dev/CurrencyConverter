@@ -8,7 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.codecollapse.currencyconverter.core.DestinationRoute.CONVERT_SCREEN_ROUTE
 import com.codecollapse.currencyconverter.screens.convert.convertNavGraph
 import com.codecollapse.currencyconverter.screens.currency.currencyNavGraph
-import com.codecollapse.currencyconverter.screens.rates.rateNavGraph
+import com.codecollapse.currencyconverter.screens.chart.chartNavGraph
 
 @Composable
 fun AppNavHost(
@@ -22,7 +22,7 @@ fun AppNavHost(
         modifier = modifier
     ) {
         convertNavGraph(navController)
-        rateNavGraph(navController)
+        chartNavGraph(navController)
         currencyNavGraph(navController)
     }
 }
