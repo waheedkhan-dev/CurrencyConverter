@@ -46,10 +46,12 @@ import com.codecollapse.currencyconverter.screens.ExchangeRateViewModel
 @Composable
 fun RateConvertComposable(
     navController: NavController,
-    updatedRate: UpdatedRate, exchangeRateViewModel: ExchangeRateViewModel
+    amount : Int,
+    fromCountry :String,
+    exchangeRateViewModel: ExchangeRateViewModel
 ) {
     val focusManager = LocalFocusManager.current
-    var updatedValue by remember { mutableStateOf(updatedRate.amount.toString()) }
+    var updatedValue by remember { mutableStateOf(amount.toString()) }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -65,7 +67,7 @@ fun RateConvertComposable(
 
             Box(
                 modifier = Modifier.clickable {
-                    navController.navigate(DestinationRoute.CURRENCY_SCREEN_ROUTE)
+                    navController.navigate("currency_screen_route/".plus(true))
                 }
             ) {
                 Row() {
@@ -80,7 +82,7 @@ fun RateConvertComposable(
                             .border(0.5.dp, color = Color.LightGray, CircleShape)
                     )
                     Text(
-                        text = updatedRate.from,
+                        text = fromCountry,
                         modifier = Modifier
                             .align(alignment = Alignment.CenterVertically)
                             .padding(start = 8.dp),
@@ -112,8 +114,10 @@ fun RateConvertComposable(
                     keyboardType = KeyboardType.Number
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    exchangeRateViewModel.updateRates(updatedRate.from, updatedRate.to, updatedValue.toInt())
-                    focusManager.clearFocus()
+                    if(updatedValue.isNotBlank()){
+                        exchangeRateViewModel.updateRates(updatedValue.toInt())
+                        focusManager.clearFocus()
+                    }
                 })
             )
 

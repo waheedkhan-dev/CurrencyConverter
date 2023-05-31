@@ -12,6 +12,6 @@ interface CurrencyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertCurrency(currency: Currency)
 
-    @Query("SELECT * FROM currency_table")
+    @Query("SELECT * FROM currency_table ORDER BY isFirst DESC")
     fun getAddedCurrencies(): List<Currency>
 }

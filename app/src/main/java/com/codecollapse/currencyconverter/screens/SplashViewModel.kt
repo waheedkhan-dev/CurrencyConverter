@@ -2,16 +2,15 @@ package com.codecollapse.currencyconverter.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.codecollapse.currencyconverter.data.repository.exchange.ExchangeRateRepositoryImpl
-import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepository
 import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl
+import com.codecollapse.currencyconverter.data.repository.exchange.ExchangeRateRepositoryImpl
+import com.codecollapse.currencyconverter.data.repository.rate.RateConverterRepositoryImpl
 import com.codecollapse.currencyconverter.utils.Constants
 import com.codecollapse.currencyconverter.utils.Resource
 import com.codecollapse.currencyconverter.utils.asResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
@@ -25,7 +24,7 @@ class SplashViewModel @Inject constructor(
     ViewModel() {
 
     private val _isDeviceSync =
-        MutableStateFlow( runBlocking { dataStoreRepository.getIsDeviceSync().getOrNull()!! })
+        MutableStateFlow(runBlocking { dataStoreRepository.getIsDeviceSync().getOrNull()!! })
     val isDeviceSync = _isDeviceSync.asStateFlow()
 
     init {
@@ -33,7 +32,8 @@ class SplashViewModel @Inject constructor(
     }
 
     private fun syncDevice() {
-        val baseCurrency = runBlocking { dataStoreRepository.getBaseCurrency().getOrNull().orEmpty() }
+        val baseCurrency =
+            runBlocking { dataStoreRepository.getBaseCurrency().getOrNull().orEmpty() }
         if (isDeviceSync.value.not()) {
             viewModelScope.launch {
                 exchangeRateRepositoryImpl.getLatestExchangeRates(

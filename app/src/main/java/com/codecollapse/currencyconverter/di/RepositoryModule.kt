@@ -57,8 +57,9 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideRateConverterRepository(
-        currencyApi: CurrencyApi
+        currencyApi: CurrencyApi,
+        currencyDao: CurrencyDao
     ): RateConverterRepositoryImpl {
-        return RateConverterRepositoryImpl(currencyApi)
+        return RateConverterRepositoryImpl(currencyApi,currencyDao)
     }
 }

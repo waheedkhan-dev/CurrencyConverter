@@ -1,5 +1,6 @@
 package com.codecollapse.currencyconverter.data.repository.rate
 
+import com.codecollapse.currencyconverter.data.model.currency.Currency
 import com.codecollapse.currencyconverter.data.model.rateConverter.UpdatedRate
 import kotlinx.coroutines.flow.Flow
 
@@ -10,5 +11,5 @@ interface RateConverterRepository {
         from: String = "PKR",
         to: String = "USD",
         amount: Int = 1
-    ): Flow<UpdatedRate>
+    ): Flow<Currency>
 }

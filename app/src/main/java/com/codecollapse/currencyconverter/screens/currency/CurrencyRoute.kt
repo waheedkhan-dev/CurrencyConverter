@@ -43,8 +43,10 @@ import com.codecollapse.currencyconverter.data.model.currency.Currency
 @Composable
 fun CountryRoute(
     navController: NavController,
-    currencyViewModel: CurrencyViewModel = hiltViewModel()
-) {
+    isChangingCurrency: Boolean,
+    currencyViewModel: CurrencyViewModel = hiltViewModel(),
+
+    ) {
     val countryUiState by currencyViewModel.currencyUiState.collectAsStateWithLifecycle()
 
     when (countryUiState) {
@@ -67,12 +69,14 @@ fun CountryRoute(
                     CountryRow(
                         currencyList = filteredList,
                         navController = navController,
+                        isChangingCurrency = isChangingCurrency,
                         currencyViewModel
                     )
                 } else {
                     CountryRow(
                         currencyList = state.toList(),
                         navController = navController,
+                        isChangingCurrency = isChangingCurrency,
                         currencyViewModel
                     )
                 }
@@ -90,6 +94,7 @@ fun CountryRoute(
 fun CountryRow(
     currencyList: List<CommonCurrency>,
     navController: NavController,
+    isChangingCurrency: Boolean,
     currencyViewModel: CurrencyViewModel
 ) {
     val listState = rememberLazyListState()
@@ -110,19 +115,24 @@ fun CountryRow(
                 )) {
                 if (selectedItem == currencyList[it].name) {
                     Text(text = currencyList[it].name, color = Color.Red)
-
-                    currencyViewModel.addCurrency(
-                        Currency(
-                            date = "",
-                            rate = 0.0,
-                            timestamp = 0,
-                            amount = 0,
-                            from = "",
-                            to = currencyList[it].code,
-                            result = 0.0,
-                            success = true
+                    if (isChangingCurrency) {
+                        currencyViewModel.updatedBaseCurrency(currencyList[it].code)
+                    } else {
+                        currencyViewModel.addCurrency(
+                            Currency(
+                                date = "",
+                                rate = 0.0,
+                                timestamp = 0,
+                                amount = 0,
+                                from = "",
+                                to = currencyList[it].code,
+                                result = 0.0,
+                                success = true,
+                                isFirst = false
+                            )
                         )
-                    )
+                    }
+
                     navController.popBackStack(CONVERT_SCREEN_ROUTE, inclusive = false)
                     /* navController.navigate(CONVERT_SCREEN_ROUTE){
                          popUpTo(CONVERT_SCREEN_ROUTE){

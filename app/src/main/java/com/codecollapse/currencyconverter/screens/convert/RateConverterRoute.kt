@@ -53,57 +53,61 @@ fun RateConverterRoute(
     LaunchedEffect(Unit) {
         exchangeRateViewModel.getAddedCurrencies()
     }
-    val rateConverterUiState by exchangeRateViewModel.rateConverterUiState
-        .collectAsStateWithLifecycle()
-    val updatedRate by exchangeRateViewModel.updatedRate.collectAsStateWithLifecycle()
+   /* val rateConverterUiState by exchangeRateViewModel.rateConverterUiState
+        .collectAsStateWithLifecycle()*/
+    val enterAmount by exchangeRateViewModel.enterAmount.collectAsStateWithLifecycle()
+    val fromCountryCode by exchangeRateViewModel.fromCountryCode.collectAsStateWithLifecycle()
     val currencies = exchangeRateViewModel.currencies.value
     val listState = rememberLazyListState()
-    when (rateConverterUiState) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        RateConvertComposable(
+            navController = navController,
+            amount = enterAmount,
+            fromCountry = fromCountryCode,
+            exchangeRateViewModel = exchangeRateViewModel
+        )
+        /*ToRateConvertComposable(
+            navController = navController,
+            updatedRate = updatedRate
+        )*/
+        Spacer(modifier = Modifier.height(20.dp))
+
+        if (currencies.isEmpty().not()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                state = listState,
+                contentPadding = PaddingValues(16.dp)
+            ) {
+                items(currencies.size) {
+                    AddedCurrencyComposable(
+                        currency = currencies[it]
+                    )
+                }
+            }
+
+        }
+        Button(modifier = Modifier.padding(12.dp), onClick = {
+            navController.navigate("currency_screen_route/".plus(false))
+        }) {
+            Text(text = "Add Currency")
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+    }
+   /* when (rateConverterUiState) {
         RateConverterUiState.Loading -> {
         }
 
         is RateConverterUiState.Success -> {
 
             // val rate = (rateConverterUiState as RateConverterUiState.Success).rateConverter
-            Column(modifier = Modifier.fillMaxSize()) {
-                RateConvertComposable(
-                    navController = navController,
-                    updatedRate = updatedRate,
-                    exchangeRateViewModel = exchangeRateViewModel
-                )
-                ToRateConvertComposable(
-                    navController = navController,
-                    updatedRate = updatedRate
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-                Button(modifier = Modifier.padding(12.dp), onClick = {
-                    navController.navigate(DestinationRoute.CURRENCY_SCREEN_ROUTE)
-                }) {
-                    Text(text = "Add Currency")
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                if (currencies.isEmpty().not()) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxWidth(),
-                        state = listState,
-                        contentPadding = PaddingValues(16.dp)
-                    ) {
-                        items(currencies.size) {
-                            AddedCurrencyComposable(
-                                currency = currencies[it]
-                            )
-                        }
-                    }
 
-                }
-
-            }
 
         }
 
         RateConverterUiState.Error -> {
         }
-    }
+    }*/
 }
 
 @Composable

@@ -1,7 +1,6 @@
 package com.codecollapse.currencyconverter.data.repository
 
 import android.content.Context
-import android.icu.util.CurrencyAmount
 import com.codecollapse.currencyconverter.R
 import com.codecollapse.currencyconverter.data.model.currency.CommonCurrency
 import com.codecollapse.currencyconverter.data.model.currency.Currency
@@ -47,9 +46,9 @@ class CommonCurrencyRepository @Inject constructor(
         val baseCurrency = runBlocking { dataStoreRepositoryImpl.getBaseCurrency().getOrNull() }!!
         val amount = runBlocking { dataStoreRepositoryImpl.getAmount().getOrNull() }!!
         val currencies = currencyDao.getAddedCurrencies()
-        val symbols = ""
+        var symbols = ""
         currencies.forEach {
-            symbols.plus(it.to).plus(",")
+            symbols = symbols.plus(it.to).plus(",")
         }
 
         exchangeRateRepositoryImpl.getLatestExchangeRates(
@@ -66,13 +65,26 @@ class CommonCurrencyRepository @Inject constructor(
                     currencyDao.insertCurrency(currency)
                     currenciesList.add(currency)
                 }
-
+            } else {
+                val currency = Currency(
+                    date = exchangeRate.date,
+                    rate = exchangeRate.rates["USD"]!!,
+                    timestamp = exchangeRate.timestamp,
+                    amount = amount,
+                    from = exchangeRate.base,
+                    to = "USD",
+                    result = amount.times(exchangeRate.rates["USD"]!!),
+                    success = exchangeRate.success,
+                    isFirst = true
+                )
+                currencyDao.insertCurrency(currency)
+                currenciesList.add(currency)
             }
         }
         emit(currenciesList)
     }.flowOn(IO)
 
-    fun getCurrenciesWithUpdatedValues(amount: Int) : List<Currency>{
+    fun getCurrenciesWithUpdatedValues(amount: Int): List<Currency> {
         val currencies = currencyDao.getAddedCurrencies()
         currencies.forEach { currency ->
             currency.result = currency.rate.times(amount)

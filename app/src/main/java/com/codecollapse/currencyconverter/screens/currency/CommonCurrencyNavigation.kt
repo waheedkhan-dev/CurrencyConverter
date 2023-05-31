@@ -8,7 +8,13 @@ import androidx.navigation.navArgument
 import com.codecollapse.currencyconverter.core.DestinationRoute
 
 fun NavGraphBuilder.currencyNavGraph(navController: NavController) {
-    composable(route = DestinationRoute.CURRENCY_SCREEN_ROUTE) {
-        CountryRoute(navController,)
+    composable(route = DestinationRoute.CURRENCY_SCREEN_ROUTE, arguments = listOf(
+        navArgument("isChangingCurrency") {
+            type = NavType.BoolType
+            defaultValue = false
+        }
+    )) {
+        val isChangingCurrency = it.arguments!!.getBoolean("isChangingCurrency")
+        CountryRoute(navController, isChangingCurrency)
     }
 }

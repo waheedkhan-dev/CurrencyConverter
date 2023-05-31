@@ -13,7 +13,8 @@ data class Currency(
     @PrimaryKey
     val to: String,
     var result: Double,
-    val success: Boolean
+    val success: Boolean,
+    val isFirst : Boolean
 ){
-    constructor() : this(date = "", rate = 0.0, timestamp = 0, amount = 0, from = "", to = "", result = 0.0, success = false)
+    constructor() : this(date = "", rate = 0.0, timestamp = 0, amount = 0, from = "", to = "", result = 0.0, success = false,isFirst = false)
 }

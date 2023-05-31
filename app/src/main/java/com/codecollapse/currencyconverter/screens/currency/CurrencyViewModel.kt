@@ -1,12 +1,12 @@
 package com.codecollapse.currencyconverter.screens.currency
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.codecollapse.currencyconverter.core.ui.currency.CurrencyUiState
 import com.codecollapse.currencyconverter.data.model.currency.Currency
 import com.codecollapse.currencyconverter.data.repository.CommonCurrencyRepository
+import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl
 import com.codecollapse.currencyconverter.utils.Resource
 import com.codecollapse.currencyconverter.utils.asResource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CurrencyViewModel @Inject constructor(private val commonCurrencyRepository: CommonCurrencyRepository) :
+class CurrencyViewModel @Inject constructor(
+    private val commonCurrencyRepository: CommonCurrencyRepository,
+    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl
+) :
     ViewModel() {
 
 
@@ -53,5 +56,10 @@ class CurrencyViewModel @Inject constructor(private val commonCurrencyRepository
         }
     }
 
+    fun updatedBaseCurrency(currency: String) {
+        viewModelScope.launch(IO){
+            dataStoreRepositoryImpl.setBaseCurrency(currency)
+        }
+    }
 
 }
