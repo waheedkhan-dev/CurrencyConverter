@@ -10,10 +10,9 @@ The Currency Converter application is designed to demonstrate and promote modern
 <p></p>
 <p></p>
 <p></p>
-<img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/64e39a5f-61bd-44ad-8e8e-346e07f4ed61" alt="screen 1" />
-<img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/bc695ca3-739c-46b6-b3ba-e9c2bfc4ee88" alt="screen 2" />
-<img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/c1ccc6fc-aeec-4cad-a008-b501a75e4de3" alt="screen 3" />
-<img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/4111a265-3cf5-417a-b487-a36414331b9e" alt="screen 4" />
-
+<img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/78a96dfb-d377-491f-9933-53c80b594102" alt="screen 1" />
+<img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/e942194f-aeba-4d8d-b83f-55f127ea27da" alt="screen 2" />
+<img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/56930690-a8df-408b-b6b5-2c8284b997dd" alt="screen 3" />
+<img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/b369a0fc-a483-480d-bf80-1ba839c320ae" alt="screen 4" />
 
 
