@@ -2,7 +2,6 @@ package com.codecollapse.currencyconverter.components
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -32,8 +31,6 @@ fun BottomBar(
         BottomBarDestination.CONVERT,
         BottomBarDestination.RATE
     )
-    /*  val navBackStackEntry by navController.currentBackStackEntryAsState()
-      val currentDest = navBackStackEntry?.destination*/
 
     val bottomBarDestination = screens.any { it.route == currentDestination?.route }
     if (bottomBarDestination) {
@@ -96,10 +93,6 @@ fun RowScope.BottomItem(
                 // Restore state when reselecting a previously selected item
                 restoreState = true
             }
-            /* navController.navigate(screen.route) {
-                 popUpTo(navController.graph.findStartDestination().id)
-                 launchSingleTop = true
-             }*/
         }
     )
 }

@@ -348,11 +348,6 @@ fun DrawChartComposable(
         Spacer(modifier = Modifier.height(40.dp))
         LineChartView(fluctuationState = fluctuationState)
 
-        /*  BarChartData(
-              bars = listOf(BarChartData.Bar(label = "Bar Label", value = 100f, color = Color.Red)),
-              padBy = 1f,
-              startAtZero = true
-          )*/
     }
 }
 

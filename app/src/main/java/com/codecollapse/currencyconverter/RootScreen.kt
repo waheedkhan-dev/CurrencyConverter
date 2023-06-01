@@ -3,13 +3,9 @@ package com.codecollapse.currencyconverter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -17,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.codecollapse.currencyconverter.components.BottomBar
@@ -52,10 +47,12 @@ fun RootScreen() {
                 BottomBar(navController, currentDestination)
             }
         ) {
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color.White)
-                .padding(it)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.White)
+                    .padding(it)
+            ) {
                 AppNavHost(navController = navController)
             }
         }

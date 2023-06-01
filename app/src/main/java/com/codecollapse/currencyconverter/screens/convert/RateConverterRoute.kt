@@ -25,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
@@ -53,11 +52,6 @@ fun RateConverterRoute(
     navController: NavController,
     exchangeRateViewModel: ExchangeRateViewModel = hiltViewModel()
 ) {
-    /* LaunchedEffect(Unit) {
-         exchangeRateViewModel.getAddedCurrencies()
-     }*/
-
-
     val rateConverterUiState by exchangeRateViewModel.rateConverterUiState
         .collectAsStateWithLifecycle()
     val enterAmount by exchangeRateViewModel.enterAmount.collectAsStateWithLifecycle()
@@ -98,7 +92,12 @@ fun RateConverterRoute(
                                 style = TextStyle(
                                     textAlign = TextAlign.Center,
                                     fontSize = 22.sp,
-                                    fontFamily = FontFamily(Font(R.font.montserrat_semi_bold,FontWeight.W400)),
+                                    fontFamily = FontFamily(
+                                        Font(
+                                            R.font.montserrat_semi_bold,
+                                            FontWeight.W400
+                                        )
+                                    ),
                                     color = colorResource(id = R.color.card_background_color)
                                 )
                             )
@@ -113,10 +112,6 @@ fun RateConverterRoute(
 
                     }
 
-                    /*ToRateConvertComposable(
-                        navController = navController,
-                        updatedRate = updatedRate
-                    )*/
                     Spacer(modifier = Modifier.height(8.dp))
 
                     if (currencies.isEmpty().not()) {
@@ -145,7 +140,12 @@ fun RateConverterRoute(
                             style = TextStyle(
                                 textAlign = TextAlign.Center,
                                 fontSize = 12.sp,
-                                fontFamily = FontFamily(Font(R.font.montserrat_medium,FontWeight.W300)),
+                                fontFamily = FontFamily(
+                                    Font(
+                                        R.font.montserrat_medium,
+                                        FontWeight.W300
+                                    )
+                                ),
                                 color = colorResource(id = R.color.color_header_text)
                             )
                         )
@@ -188,22 +188,12 @@ fun AddedCurrencyComposable(
 
             Box {
                 Column() {
-                    /* Image(
-                         painter = painterResource(id = R.drawable.pk),
-                         contentDescription = "",
-                         contentScale = ContentScale.Crop,
-                         modifier = Modifier
-                             .align(Alignment.CenterVertically)
-                             .size(18.dp)
-                             .clip(CircleShape)
-                             .border(0.5.dp, color = Color.LightGray, CircleShape)
-                     )*/
                     Text(
                         text = currency.to,
                         style = TextStyle(
                             textAlign = TextAlign.Center,
                             fontSize = 16.sp,
-                            fontFamily = FontFamily(Font(R.font.montserrat_bold,FontWeight.W300)),
+                            fontFamily = FontFamily(Font(R.font.montserrat_bold, FontWeight.W300)),
                             color = colorResource(id = R.color.color_header_text)
                         )
                     )
@@ -212,7 +202,12 @@ fun AddedCurrencyComposable(
                         style = TextStyle(
                             textAlign = TextAlign.Center,
                             fontSize = 12.sp,
-                            fontFamily = FontFamily(Font(R.font.montserrat_medium,FontWeight.W300)),
+                            fontFamily = FontFamily(
+                                Font(
+                                    R.font.montserrat_medium,
+                                    FontWeight.W300
+                                )
+                            ),
                             color = colorResource(id = R.color.grey)
                         )
                     )
@@ -227,7 +222,7 @@ fun AddedCurrencyComposable(
                         color = colorResource(id = R.color.color_header_text),
                         textAlign = TextAlign.Center,
                         fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.montserrat_semi_bold,FontWeight.W500)),
+                        fontFamily = FontFamily(Font(R.font.montserrat_semi_bold, FontWeight.W500)),
                     )
                 )
                 Text(
@@ -237,7 +232,7 @@ fun AddedCurrencyComposable(
                         color = colorResource(id = R.color.grey),
                         textAlign = TextAlign.Center,
                         fontSize = 11.sp,
-                        fontFamily = FontFamily(Font(R.font.montserrat_medium,FontWeight.W800)),
+                        fontFamily = FontFamily(Font(R.font.montserrat_medium, FontWeight.W800)),
                     )
                 )
             }

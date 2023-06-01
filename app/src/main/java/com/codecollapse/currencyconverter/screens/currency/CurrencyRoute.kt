@@ -40,7 +40,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -67,9 +66,11 @@ fun CountryRoute(
         }
 
         is CurrencyUiState.Success -> {
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .background(colorResource(id = R.color.card_background_color))) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(id = R.color.card_background_color))
+            ) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
                     modifier = Modifier
@@ -188,39 +189,6 @@ fun CountryRow(
 
 }
 
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun CountryRoww(
-
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Text(
-            modifier = Modifier.padding(8.dp),
-            text = "CAD  - ", style = TextStyle(
-                textAlign = TextAlign.Start,
-                fontWeight = FontWeight.Medium,
-                fontSize = 18.sp,
-                color = colorResource(id = R.color.color_header_text)
-            )
-        )
-        Text(
-            modifier = Modifier.padding(8.dp),
-            text = "Canadian Dollar", style = TextStyle(
-                textAlign = TextAlign.Start,
-                fontWeight = FontWeight.Normal,
-                fontSize = 18.sp,
-                color = colorResource(id = R.color.color_sub_text)
-            )
-        )
-    }
-}
-*/
-
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 
 
@@ -241,9 +209,6 @@ fun SearchEditText(onSearchQueryChange: (String) -> Unit) {
                     if (focusState.isFocused) {
                         keyboardController?.show()
                     }
-                    /*  if (focusState == FocusState.Active) {
-                          keyboardController?.show()
-                      }*/
                 }
                 .fillMaxWidth(),
             placeholder = {
