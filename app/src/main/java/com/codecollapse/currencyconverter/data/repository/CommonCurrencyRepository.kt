@@ -53,7 +53,6 @@ class CommonCurrencyRepository @Inject constructor(
                 emit(response.body()!!)
             }
         }
-
     }
 
     fun addCurrency(currency: Currency) {

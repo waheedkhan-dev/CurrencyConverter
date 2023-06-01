@@ -7,12 +7,18 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import com.codecollapse.currencyconverter.R
 import com.codecollapse.currencyconverter.navigation.BottomBarDestination
 
 
@@ -32,7 +38,7 @@ fun BottomBar(
     val bottomBarDestination = screens.any { it.route == currentDestination?.route }
     if (bottomBarDestination) {
         NavigationBar(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = colorResource(id = R.color.light_green)
         ) {
             screens.forEach { screen ->
                 BottomItem(
@@ -56,7 +62,16 @@ fun RowScope.BottomItem(
     NavigationBarItem(
         label = {
             screen.title?.let {
-                Text(stringResource(id = it))
+                Text(
+                    stringResource(id = it), style = TextStyle(
+                        fontFamily = FontFamily(
+                            Font(
+                                R.font.montserrat_regular,
+                                weight = FontWeight.Medium
+                            )
+                        )
+                    )
+                )
             }
         },
         icon = {

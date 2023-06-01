@@ -111,7 +111,7 @@ fun CountryRoute(
 
         }
 
-        CurrencyUiState.Error -> {
+        is CurrencyUiState.Error -> {
 
         }
     }

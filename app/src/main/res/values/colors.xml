@@ -10,6 +10,7 @@
 
     <color name="card_background_color">#F7F9FA</color>
     <color name="color_sub_text">#BCC0C5</color>
+    <color name="grey">#787c83</color>
     <color name="color_header_text">#040D18</color>
     <color name="background_color">#44545C</color>
     <color name="welcome_color">#89B09B</color>

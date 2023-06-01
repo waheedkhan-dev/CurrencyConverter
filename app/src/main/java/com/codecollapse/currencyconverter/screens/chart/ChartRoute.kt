@@ -26,6 +26,7 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,11 +37,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -50,12 +54,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.codecollapse.currencyconverter.R
 import com.codecollapse.currencyconverter.core.ui.currency.CurrencyUiState
+import com.codecollapse.currencyconverter.core.ui.fluctuation.FluctuationUiState
 import com.codecollapse.currencyconverter.data.model.currency.CommonCurrency
 import com.codecollapse.currencyconverter.data.model.currency.Currency
 import com.codecollapse.currencyconverter.screens.currency.CurrencyViewModel
 import com.codecollapse.currencyconverter.screens.currency.SearchEditText
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import me.bytebeats.views.charts.line.LineChart
 import me.bytebeats.views.charts.line.LineChartData
 import me.bytebeats.views.charts.line.render.line.SolidLineDrawer
@@ -63,7 +67,7 @@ import me.bytebeats.views.charts.line.render.point.FilledCircularPointDrawer
 import me.bytebeats.views.charts.line.render.xaxis.SimpleXAxisDrawer
 import me.bytebeats.views.charts.line.render.yaxis.SimpleYAxisDrawer
 import me.bytebeats.views.charts.simpleChartAnimation
-import kotlin.random.Random
+import timber.log.Timber
 
 @ExperimentalMaterialApi
 @Composable
@@ -73,9 +77,12 @@ fun ChartRoute(
 ) {
 
     LaunchedEffect(Unit) {
-         currencyViewModel.getCurrency(true)
+        currencyViewModel.getCurrency(true)
+        //currencyViewModel.checkFluctuation("PKR", "USD")
     }
 
+    val fluctuationState by currencyViewModel.fluctuationUiState
+        .collectAsStateWithLifecycle()
     val countryUiState by currencyViewModel.currencyUiState.collectAsStateWithLifecycle()
     val defaultSelectedCurrency by currencyViewModel.defaultCurrency.collectAsStateWithLifecycle()
     when (countryUiState) {
@@ -85,11 +92,11 @@ fun ChartRoute(
 
         is CurrencyUiState.Success -> {
             val state = (countryUiState as CurrencyUiState.Success).countryItem
-            BottomSheet(state.toList(),defaultSelectedCurrency,currencyViewModel)
+            BottomSheet(state.toList(), fluctuationState, defaultSelectedCurrency)
         }
 
-        is CurrencyUiState.Error -> {
-
+        CurrencyUiState.Error -> {
+            Timber.tag("CurrencyUiState Error")
         }
     }
 
@@ -97,7 +104,11 @@ fun ChartRoute(
 
 @ExperimentalMaterialApi
 @Composable
-private fun BottomSheet(currency: List<CommonCurrency>, defaultSelectedCurrency: Currency,currencyViewModel : CurrencyViewModel) {
+private fun BottomSheet(
+    currency: List<CommonCurrency>,
+    fluctuationState: FluctuationUiState,
+    defaultSelectedCurrency: Currency
+) {
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
@@ -156,7 +167,7 @@ private fun BottomSheet(currency: List<CommonCurrency>, defaultSelectedCurrency:
             }
         }
     ) {
-        DrawChartComposable(modalSheetState, scope, defaultSelectedCurrency,currencyViewModel)
+        DrawChartComposable(modalSheetState, scope, fluctuationState, defaultSelectedCurrency)
     }
 }
 
@@ -165,8 +176,8 @@ private fun BottomSheet(currency: List<CommonCurrency>, defaultSelectedCurrency:
 fun DrawChartComposable(
     sheetState: ModalBottomSheetState,
     scope: CoroutineScope,
-    defaultSelectedCurrency: Currency,
-    currencyViewModel : CurrencyViewModel
+    fluctuationState: FluctuationUiState,
+    defaultSelectedCurrency: Currency
 ) {
 
     Column(
@@ -182,7 +193,7 @@ fun DrawChartComposable(
                 .align(alignment = Alignment.CenterHorizontally),
             text = "Chart", style = TextStyle(
                 textAlign = TextAlign.Start,
-                fontWeight = FontWeight.Normal,
+                fontFamily = FontFamily(Font(R.font.montserrat_semi_bold, FontWeight.W400)),
                 fontSize = 18.sp,
                 color = colorResource(id = R.color.color_header_text)
             )
@@ -207,7 +218,7 @@ fun DrawChartComposable(
                         RoundedCornerShape(12.dp)
                     )
                     .clickable {
-                       /* scope.launch {
+                        /* scope.launch {
                             if (sheetState.isVisible)
                                 sheetState.hide()
                             else
@@ -225,7 +236,7 @@ fun DrawChartComposable(
                         style = TextStyle(
                             textAlign = TextAlign.Center,
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.ExtraBold,
+                            fontFamily = FontFamily(Font(R.font.montserrat_bold, FontWeight.W300)),
                             color = colorResource(id = R.color.color_header_text)
                         )
                     )
@@ -262,7 +273,7 @@ fun DrawChartComposable(
                         RoundedCornerShape(12.dp)
                     )
                     .clickable {
-                       /* scope.launch {
+                        /* scope.launch {
                             if (sheetState.isVisible)
                                 sheetState.hide()
                             else
@@ -280,7 +291,7 @@ fun DrawChartComposable(
                         style = TextStyle(
                             textAlign = TextAlign.Center,
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.ExtraBold,
+                            fontFamily = FontFamily(Font(R.font.montserrat_bold, FontWeight.W300)),
                             color = colorResource(id = R.color.color_header_text)
                         )
                     )
@@ -313,9 +324,10 @@ fun DrawChartComposable(
                     modifier = Modifier
                         .padding(8.dp)
                         .align(alignment = Alignment.CenterHorizontally),
-                    text = "1 ${defaultSelectedCurrency.from} = ${defaultSelectedCurrency.rate} ${defaultSelectedCurrency.to}", style = TextStyle(
+                    text = "1 ${defaultSelectedCurrency.from} = ${defaultSelectedCurrency.rate} ${defaultSelectedCurrency.to}",
+                    style = TextStyle(
                         textAlign = TextAlign.Start,
-                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily(Font(R.font.montserrat_bold, FontWeight.W400)),
                         fontSize = 22.sp,
                         color = colorResource(id = R.color.color_header_text)
                     )
@@ -325,7 +337,7 @@ fun DrawChartComposable(
                         .align(alignment = Alignment.CenterHorizontally),
                     text = "-0.003 past month", style = TextStyle(
                         textAlign = TextAlign.Start,
-                        fontWeight = FontWeight.Medium,
+                        fontFamily = FontFamily(Font(R.font.montserrat_medium, FontWeight.W200)),
                         fontSize = 14.sp,
                         color = colorResource(id = R.color.background_color)
                     )
@@ -334,8 +346,8 @@ fun DrawChartComposable(
         }
 
         Spacer(modifier = Modifier.height(40.dp))
-        currencyViewModel.checkFluctuation(defaultSelectedCurrency.to,defaultSelectedCurrency.from)
-        LineChartView()
+        LineChartView(fluctuationState = fluctuationState)
+
         /*  BarChartData(
               bars = listOf(BarChartData.Bar(label = "Bar Label", value = 100f, color = Color.Red)),
               padBy = 1f,
@@ -390,24 +402,46 @@ fun CurrencyListComposable(currencyList: List<CommonCurrency>) {
 }
 
 @Composable
-fun LineChartView() {
-    LineChart(
-        lineChartData = LineChartData(
-            points = listOf(
-                LineChartData.Point(0.006543.toFloat(), "2021-04-01"),
-                LineChartData.Point(0.003528.toFloat(), "2023-04-25"),
-                LineChartData.Point(0.003525.toFloat(), "2023-05-01"),
-               /* LineChartData.Point(Random.nextInt(20,30).toFloat(), "Line 3"),
-                LineChartData.Point(Random.nextInt(30,40).toFloat(), "Line 4"),
-                LineChartData.Point(Random.nextInt(40,50).toFloat(), "Line 5"),*/
+fun LineChartView(fluctuationState: FluctuationUiState) {
+    when (fluctuationState) {
+        FluctuationUiState.Loading -> {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(alignment = CenterHorizontally)
+                )
+            }
+        }
+
+        is FluctuationUiState.Success -> {
+            LineChart(
+                lineChartData = LineChartData(
+                    points = listOf(
+                        LineChartData.Point(
+                            fluctuationState.currencyFluctuation.rates.USD.start_rate.toFloat(),
+                            fluctuationState.currencyFluctuation.start_date
+                        ),
+                        LineChartData.Point(
+                            fluctuationState.currencyFluctuation.rates.USD.end_rate.toFloat(),
+                            fluctuationState.currencyFluctuation.end_date
+                        ),
+                    )
+                ),
+                modifier = Modifier.fillMaxSize(),
+                animation = simpleChartAnimation(),
+                pointDrawer = FilledCircularPointDrawer(),
+                lineDrawer = SolidLineDrawer(),
+                xAxisDrawer = SimpleXAxisDrawer(),
+                yAxisDrawer = SimpleYAxisDrawer(),
+                horizontalOffset = 5f
             )
-        ),
-        modifier = Modifier.fillMaxSize(),
-        animation = simpleChartAnimation(),
-        pointDrawer = FilledCircularPointDrawer(),
-        lineDrawer = SolidLineDrawer(),
-        xAxisDrawer = SimpleXAxisDrawer(),
-        yAxisDrawer = SimpleYAxisDrawer(),
-        horizontalOffset = 5f
-    )
+        }
+
+        FluctuationUiState.Error -> {
+
+        }
+    }
+
 }
