@@ -12,9 +12,7 @@ The Currency Converter application is designed to demonstrate and promote modern
 <p><img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/78a96dfb-d377-491f-9933-53c80b594102" alt="screen 1" /></p>
 
 <p><img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/e942194f-aeba-4d8d-b83f-55f127ea27da" alt="screen 2" /></p>
-<h3></h3>
-<h3></h3>
-<h3></h3>
+<br></br>
 <p><img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/56930690-a8df-408b-b6b5-2c8284b997dd" alt="screen 3" /></p>
 
 <p><img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/b369a0fc-a483-480d-bf80-1ba839c320ae" alt="screen 4" /></p>
