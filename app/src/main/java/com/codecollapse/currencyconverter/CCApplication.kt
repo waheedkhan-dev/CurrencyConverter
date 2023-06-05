@@ -22,7 +22,7 @@ open class CCApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         setTimberConfiguration()
-        setUpPeriodicWorkRequest()
+      //  setUpPeriodicWorkRequest()
     }
 
     protected open fun setTimberConfiguration() {

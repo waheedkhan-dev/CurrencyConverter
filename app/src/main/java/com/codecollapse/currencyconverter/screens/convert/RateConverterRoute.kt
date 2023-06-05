@@ -22,6 +22,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +53,7 @@ fun RateConverterRoute(
     navController: NavController,
     exchangeRateViewModel: ExchangeRateViewModel = hiltViewModel()
 ) {
+
     val rateConverterUiState by exchangeRateViewModel.rateConverterUiState
         .collectAsStateWithLifecycle()
     val enterAmount by exchangeRateViewModel.enterAmount.collectAsStateWithLifecycle()

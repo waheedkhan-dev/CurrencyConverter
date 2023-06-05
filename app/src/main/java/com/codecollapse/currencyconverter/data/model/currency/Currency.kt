@@ -13,7 +13,7 @@ data class Currency(
     var amount: Int,
     var from: String,
     @PrimaryKey
-    val to: String,
+    var to: String,
     var result: Double,
     val success: Boolean,
     val isFirst : Boolean

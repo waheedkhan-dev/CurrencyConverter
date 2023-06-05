@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.codecollapse.currencyconverter.data.model.currency.Currency
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CurrencyDao {
@@ -15,5 +16,5 @@ interface CurrencyDao {
     @Query("SELECT * FROM currency_table Where isFirst=:isFirst")
     fun getCurrency(isFirst : Boolean) : Currency
     @Query("SELECT * FROM currency_table ORDER BY isFirst DESC")
-    fun getAddedCurrencies(): List<Currency>
+    fun getAddedCurrencies(): Flow<List<Currency>>
 }

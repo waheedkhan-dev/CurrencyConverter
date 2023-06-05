@@ -27,14 +27,16 @@ object RepositoryModule {
         currencyDao: CurrencyDao,
         exchangeRateRepositoryImpl: ExchangeRateRepositoryImpl,
         dataStoreRepositoryImpl: DataStoreRepositoryImpl,
-        currencyApi: CurrencyApi
+        currencyApi: CurrencyApi,
+        exchangeRateDao: ExchangeRateDao
     ): CommonCurrencyRepository {
         return CommonCurrencyRepository(
             context,
             currencyDao = currencyDao,
             exchangeRateRepositoryImpl = exchangeRateRepositoryImpl,
             dataStoreRepositoryImpl = dataStoreRepositoryImpl,
-            currencyApi = currencyApi
+            currencyApi = currencyApi,
+            exchangeRateDao = exchangeRateDao
         )
     }
 
@@ -48,11 +50,15 @@ object RepositoryModule {
     @Provides
     fun provideExchangeRateRepository(
         currencyApi: CurrencyApi,
-        exchangeRateDao: ExchangeRateDao
+        currencyDao: CurrencyDao,
+        exchangeRateDao: ExchangeRateDao,
+        dataStoreRepositoryImpl: DataStoreRepositoryImpl
     ): ExchangeRateRepositoryImpl {
         return ExchangeRateRepositoryImpl(
             currencyApi = currencyApi,
-            exchangeRateDao = exchangeRateDao
+            exchangeRateDao = exchangeRateDao,
+            currencyDao = currencyDao,
+            dataStoreRepositoryImpl = dataStoreRepositoryImpl
         )
     }
 
@@ -62,6 +68,6 @@ object RepositoryModule {
         currencyApi: CurrencyApi,
         currencyDao: CurrencyDao
     ): RateConverterRepositoryImpl {
-        return RateConverterRepositoryImpl(currencyApi,currencyDao)
+        return RateConverterRepositoryImpl(currencyApi, currencyDao)
     }
 }

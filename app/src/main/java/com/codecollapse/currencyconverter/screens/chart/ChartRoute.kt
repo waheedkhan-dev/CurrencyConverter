@@ -53,7 +53,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.codecollapse.currencyconverter.R
-import com.codecollapse.currencyconverter.core.ui.currency.CurrencyUiState
 import com.codecollapse.currencyconverter.core.ui.fluctuation.FluctuationUiState
 import com.codecollapse.currencyconverter.data.model.currency.CommonCurrency
 import com.codecollapse.currencyconverter.data.model.currency.Currency
@@ -67,7 +66,6 @@ import me.bytebeats.views.charts.line.render.point.FilledCircularPointDrawer
 import me.bytebeats.views.charts.line.render.xaxis.SimpleXAxisDrawer
 import me.bytebeats.views.charts.line.render.yaxis.SimpleYAxisDrawer
 import me.bytebeats.views.charts.simpleChartAnimation
-import timber.log.Timber
 
 @ExperimentalMaterialApi
 @Composable
@@ -83,22 +81,9 @@ fun ChartRoute(
 
     val fluctuationState by currencyViewModel.fluctuationUiState
         .collectAsStateWithLifecycle()
-    val countryUiState by currencyViewModel.currencyUiState.collectAsStateWithLifecycle()
+    val currencyList = currencyViewModel.getCurrencyList()
     val defaultSelectedCurrency by currencyViewModel.defaultCurrency.collectAsStateWithLifecycle()
-    when (countryUiState) {
-        CurrencyUiState.Loading -> {
-
-        }
-
-        is CurrencyUiState.Success -> {
-            val state = (countryUiState as CurrencyUiState.Success).countryItem
-            BottomSheet(state.toList(), fluctuationState, defaultSelectedCurrency)
-        }
-
-        CurrencyUiState.Error -> {
-            Timber.tag("CurrencyUiState Error")
-        }
-    }
+    BottomSheet(currencyList.toList(), fluctuationState, defaultSelectedCurrency)
 
 }
 

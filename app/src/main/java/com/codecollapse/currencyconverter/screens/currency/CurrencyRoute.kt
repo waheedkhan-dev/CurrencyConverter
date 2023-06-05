@@ -43,79 +43,62 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.codecollapse.currencyconverter.R
 import com.codecollapse.currencyconverter.core.DestinationRoute.CONVERT_SCREEN_ROUTE
-import com.codecollapse.currencyconverter.core.ui.currency.CurrencyUiState
 import com.codecollapse.currencyconverter.data.model.currency.CommonCurrency
-import com.codecollapse.currencyconverter.data.model.currency.Currency
 
 @Composable
 fun CountryRoute(
     navController: NavController,
     isChangingCurrency: Boolean,
     currencyViewModel: CurrencyViewModel = hiltViewModel(),
+) {
 
+    val list = currencyViewModel.getCurrencyList()
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(colorResource(id = R.color.card_background_color))
     ) {
-    val countryUiState by currencyViewModel.currencyUiState.collectAsStateWithLifecycle()
-
-    when (countryUiState) {
-        CurrencyUiState.Loading -> {
-
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            modifier = Modifier
+                .padding(8.dp)
+                .align(alignment = Alignment.CenterHorizontally),
+            text = "Select currency", style = TextStyle(
+                textAlign = TextAlign.Start,
+                fontWeight = FontWeight.Normal,
+                fontSize = 18.sp,
+                color = colorResource(id = R.color.color_header_text)
+            )
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        var searchQuery by remember { mutableStateOf("") }
+        SearchEditText(onSearchQueryChange = { newQuery ->
+            searchQuery = newQuery
+            // Perform search operation with newQuery
+        })
+        val filteredList = list.filter { currency ->
+            currency.name.contains(searchQuery, ignoreCase = true)
         }
-
-        is CurrencyUiState.Success -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(colorResource(id = R.color.card_background_color))
-            ) {
-                Spacer(modifier = Modifier.height(20.dp))
-                Text(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .align(alignment = Alignment.CenterHorizontally),
-                    text = "Select currency", style = TextStyle(
-                        textAlign = TextAlign.Start,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 18.sp,
-                        color = colorResource(id = R.color.color_header_text)
-                    )
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-                val state = (countryUiState as CurrencyUiState.Success).countryItem
-                var searchQuery by remember { mutableStateOf("") }
-                SearchEditText(onSearchQueryChange = { newQuery ->
-                    searchQuery = newQuery
-                    // Perform search operation with newQuery
-                })
-                val filteredList = state.filter { currency ->
-                    currency.name.contains(searchQuery, ignoreCase = true)
-                }
-                if (filteredList.isEmpty().not()) {
-                    CountryRow(
-                        currencyList = filteredList,
-                        navController = navController,
-                        isChangingCurrency = isChangingCurrency,
-                        currencyViewModel
-                    )
-                } else {
-                    CountryRow(
-                        currencyList = state.toList(),
-                        navController = navController,
-                        isChangingCurrency = isChangingCurrency,
-                        currencyViewModel
-                    )
-                }
-            }
-
-        }
-
-        is CurrencyUiState.Error -> {
-
+        if (filteredList.isEmpty().not()) {
+            CountryRow(
+                currencyList = filteredList,
+                navController = navController,
+                isChangingCurrency = isChangingCurrency,
+                currencyViewModel
+            )
+        } else {
+            CountryRow(
+                currencyList = list.toList(),
+                navController = navController,
+                isChangingCurrency = isChangingCurrency,
+                currencyViewModel
+            )
         }
     }
+
 }
 
 @Composable
@@ -164,25 +147,12 @@ fun CountryRow(
                         currencyViewModel.updatedBaseCurrency(currencyList[it].code)
                     } else {
                         currencyViewModel.addCurrency(
-                            Currency(
-                                name = currencyList[it].name,
-                                symbol = currencyList[it].symbol,
-                                date = "",
-                                rate = 0.0,
-                                timestamp = 0,
-                                amount = 0,
-                                from = "",
-                                to = currencyList[it].code,
-                                result = 0.0,
-                                success = true,
-                                isFirst = false
-                            )
+                            name = currencyList[it].name, code = currencyList[it].code,
+                            symbol = currencyList[it].symbol
                         )
                     }
-
                     navController.popBackStack(CONVERT_SCREEN_ROUTE, inclusive = false)
                 }
-
             }
         }
     }
@@ -190,8 +160,6 @@ fun CountryRow(
 }
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
-
-
 @Composable
 fun SearchEditText(onSearchQueryChange: (String) -> Unit) {
     var searchQuery by remember { mutableStateOf("") }
