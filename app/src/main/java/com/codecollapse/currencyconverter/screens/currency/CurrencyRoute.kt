@@ -1,6 +1,7 @@
 package com.codecollapse.currencyconverter.screens.currency
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -109,7 +109,7 @@ fun CountryRow(
     currencyViewModel: CurrencyViewModel
 ) {
     val listState = rememberLazyListState()
-    var selectedItem by remember { mutableStateOf("") }
+    var selectedItem by remember { mutableStateOf(false) }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = listState,
@@ -120,11 +120,18 @@ fun CountryRow(
             Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier
                 .fillMaxWidth()
-                .selectable(
-                    selected = selectedItem == currencyList[it].name, onClick = {
-                        selectedItem = currencyList[it].name
+                .clickable {
+                    if (isChangingCurrency) {
+                        currencyViewModel.updatedBaseCurrency(currencyList[it].code)
+                    } else {
+                        currencyViewModel.addCurrency(
+                            name = currencyList[it].name, code = currencyList[it].code,
+                            symbol = currencyList[it].symbol
+                        )
                     }
-                )) {
+
+                    navController.popBackStack(CONVERT_SCREEN_ROUTE, inclusive = false)
+                }) {
                 Text(
                     text = "${currencyList[it].code}  -  ", style = TextStyle(
                         textAlign = TextAlign.Start,
@@ -142,17 +149,6 @@ fun CountryRow(
                     )
                 )
 
-                if (selectedItem == currencyList[it].name) {
-                    if (isChangingCurrency) {
-                        currencyViewModel.updatedBaseCurrency(currencyList[it].code)
-                    } else {
-                        currencyViewModel.addCurrency(
-                            name = currencyList[it].name, code = currencyList[it].code,
-                            symbol = currencyList[it].symbol
-                        )
-                    }
-                    navController.popBackStack(CONVERT_SCREEN_ROUTE, inclusive = false)
-                }
             }
         }
     }

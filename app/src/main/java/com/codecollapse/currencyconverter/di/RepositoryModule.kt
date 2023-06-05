@@ -15,6 +15,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 @Module
@@ -52,13 +53,15 @@ object RepositoryModule {
         currencyApi: CurrencyApi,
         currencyDao: CurrencyDao,
         exchangeRateDao: ExchangeRateDao,
-        dataStoreRepositoryImpl: DataStoreRepositoryImpl
+        dataStoreRepositoryImpl: DataStoreRepositoryImpl,
+        coroutineScope: CoroutineScope
     ): ExchangeRateRepositoryImpl {
         return ExchangeRateRepositoryImpl(
             currencyApi = currencyApi,
             exchangeRateDao = exchangeRateDao,
             currencyDao = currencyDao,
-            dataStoreRepositoryImpl = dataStoreRepositoryImpl
+            dataStoreRepositoryImpl = dataStoreRepositoryImpl,
+            coroutineScope = coroutineScope
         )
     }
 

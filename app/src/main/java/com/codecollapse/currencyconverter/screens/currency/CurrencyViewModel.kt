@@ -2,7 +2,6 @@ package com.codecollapse.currencyconverter.screens.currency
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.codecollapse.currencyconverter.core.ui.currency.CurrencyUiState
 import com.codecollapse.currencyconverter.core.ui.fluctuation.FluctuationUiState
 import com.codecollapse.currencyconverter.data.model.currency.Currency
 import com.codecollapse.currencyconverter.data.repository.CommonCurrencyRepository
@@ -13,7 +12,6 @@ import com.codecollapse.currencyconverter.utils.Resource
 import com.codecollapse.currencyconverter.utils.asResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -35,44 +33,18 @@ class CurrencyViewModel @Inject constructor(
     ViewModel() {
 
     private val _defaultCurrency = MutableStateFlow(runBlocking { Currency() })
-    var defaultCurrency: StateFlow<Currency> =  _defaultCurrency.asStateFlow()
+    var defaultCurrency: StateFlow<Currency> = _defaultCurrency.asStateFlow()
 
     fun getCurrencyList() = commonCurrencyRepository.getCurrencyList()
-   /* val currencyUiState: StateFlow<CurrencyUiState> =
-        commonCurrencyRepository.getCurrencyList(
-        ).asResource().map {
-            when (it) {
-                is Resource.Success -> {
-                    CurrencyUiState.Success(
-                        countryItem = it.data.toList()
-                    )
-                }
 
-                is Resource.Loading -> {
-                    CurrencyUiState.Loading
-                }
-
-                is Resource.Error -> {
-                    CurrencyUiState.Error
-                }
-            }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = CurrencyUiState.Loading
-        )*/
-
-    fun addCurrency(name : String,code :String,symbol : String) {
+    fun addCurrency(name: String, code: String, symbol: String) {
         viewModelScope.launch(IO) {
-            commonCurrencyRepository.addCurrency(name,code,symbol)
+            commonCurrencyRepository.addCurrency(name, code, symbol)
         }
     }
 
     fun updatedBaseCurrency(currency: String) {
-        viewModelScope.launch(IO) {
-            exchangeRateRepositoryImpl.updateBaseCurrency(Constants.API_KEY,currency,"").collect{}
-          //  dataStoreRepositoryImpl.setBaseCurrency(currency)
-        }
+        exchangeRateRepositoryImpl.updateBaseCurrency(Constants.API_KEY, currency, "")
     }
 
     fun getCurrency(isFirst: Boolean) {
@@ -82,7 +54,7 @@ class CurrencyViewModel @Inject constructor(
     }
 
 
-    val fluctuationUiState : StateFlow<FluctuationUiState> =
+    val fluctuationUiState: StateFlow<FluctuationUiState> =
         commonCurrencyRepository.checkFluctuation(
             Constants.API_KEY,
             runBlocking { dataStoreRepositoryImpl.getBaseCurrency().getOrNull() }!!,

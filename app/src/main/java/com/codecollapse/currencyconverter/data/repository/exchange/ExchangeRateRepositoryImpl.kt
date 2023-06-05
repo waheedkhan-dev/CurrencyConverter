@@ -6,18 +6,21 @@ import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRep
 import com.codecollapse.currencyconverter.network.CurrencyApi
 import com.codecollapse.currencyconverter.source.local.dao.CurrencyDao
 import com.codecollapse.currencyconverter.source.local.dao.ExchangeRateDao
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ExchangeRateRepositoryImpl @Inject constructor(
     private val currencyApi: CurrencyApi,
     private val currencyDao: CurrencyDao,
     private val exchangeRateDao: ExchangeRateDao,
-    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl
+    private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
+    private val coroutineScope: CoroutineScope
 ) : ExchangeRateRepository {
     override fun getLatestExchangeRates(
         api_key: String,
@@ -58,8 +61,8 @@ class ExchangeRateRepositoryImpl @Inject constructor(
         api_key: String,
         baseCurrency: String,
         symbols: String
-    ): Flow<Unit> {
-        return flow {
+    ) {
+        coroutineScope.launch {
             val defaultAmount = dataStoreRepositoryImpl.getAmount().getOrNull()!!
             val response =
                 currencyApi.getLatestExchangeRates(
@@ -80,8 +83,7 @@ class ExchangeRateRepositoryImpl @Inject constructor(
                     currency.result = defaultAmount.times(exchangeRate.rates[currency.to]!!)
                     currencyDao.insertCurrency(currency)
                 }
-                emit(Unit)
             }
-        }.flowOn(IO)
+        }
     }
 }
