@@ -16,6 +16,7 @@ class CurrencyProvider : PreviewParameterProvider<Currency> {
                 from = "PKR",
                 to = "GBP",
                 result = 200.0.times(0.003549),
+                isoCode = "GB",
                 success = true,
                 isFirst = true
             )

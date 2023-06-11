@@ -2,597 +2,716 @@
 	{
 		"symbol": "$",
 		"name": "US Dollar",
-		"code": "USD"
+		"code": "USD",
+		"isoCode": "US"
 	},
 	{
 		"symbol": "$",
 		"name": "Canadian Dollar",
-		"code": "CAD"
+		"code": "CAD",
+		"isoCode": "CA"
 	},
 	{
 		"symbol": "€",
 		"name": "Euro",
-		"code": "EUR"
+		"code": "EUR",
+		"isoCode": "EU"
 	},
 	{
 		"symbol": "AED",
 		"name": "United Arab Emirates Dirham",
-		"code": "AED"
+		"code": "AED",
+		"isoCode": "AE"
 	},
 	{
 		"symbol": "Af",
 		"name": "Afghan Afghani",
-		"code": "AFN"
+		"code": "AFN",
+		"isoCode": "AF"
 	},
 	{
 		"symbol": "ALL",
 		"name": "Albanian Lek",
-		"code": "ALL"
+		"code": "ALL",
+		"isoCode": "AL"
 	},
 	{
 		"symbol": "AMD",
 		"name": "Armenian Dram",
-		"code": "AMD"
+		"code": "AMD",
+		"isoCode": "AM"
 	},
 	{
 		"symbol": "AR$",
 		"name": "Argentine Peso",
-		"code": "ARS"
+		"code": "ARS",
+		"isoCode": "AR"
 	},
 	{
 		"symbol": "AU$",
 		"name": "Australian Dollar",
-		"code": "AUD"
+		"code": "AUD",
+		"isoCode": "AU"
 	},
 	{
 		"symbol": "man.",
 		"name": "Azerbaijani Manat",
-		"code": "AZN"
+		"code": "AZN",
+		"isoCode": "AZ"
 	},
 	{
 		"symbol": "KM",
 		"name": "Bosnia-Herzegovina Convertible Mark",
-		"code": "BAM"
+		"code": "BAM",
+		"isoCode": "BA"
 	},
 	{
 		"symbol": "Tk",
 		"name": "Bangladeshi Taka",
-		"code": "BDT"
+		"code": "BDT",
+		"isoCode": "BD"
 	},
 	{
 		"symbol": "BGN",
 		"name": "Bulgarian Lev",
-		"code": "BGN"
+		"code": "BGN",
+		"isoCode": "BG"
 	},
 	{
 		"symbol": "BD",
 		"name": "Bahraini Dinar",
-		"code": "BHD"
+		"code": "BHD",
+		"isoCode": "BH"
 	},
 	{
 		"symbol": "FBu",
 		"name": "Burundian Franc",
-		"code": "BIF"
+		"code": "BIF",
+		"isoCode": "BI"
 	},
 	{
 		"symbol": "BN$",
 		"name": "Brunei Dollar",
-		"code": "BND"
+		"code": "BND",
+		"isoCode": "BN"
 	},
 	{
 		"symbol": "Bs",
 		"name": "Bolivian Boliviano",
-		"code": "BOB"
+		"code": "BOB",
+		"isoCode": "BO"
 	},
 	{
 		"symbol": "R$",
 		"name": "Brazilian Real",
-		"code": "BRL"
+		"code": "BRL",
+		"isoCode": "BR"
 	},
 	{
 		"symbol": "BWP",
 		"name": "Botswanan Pula",
-		"code": "BWP"
+		"code": "BWP",
+		"isoCode": "BW"
 	},
 	{
 		"symbol": "Br",
 		"name": "Belarusian Ruble",
-		"code": "BYN"
+		"code": "BYN",
+		"isoCode": "BY"
 	},
 	{
 		"symbol": "BZ$",
 		"name": "Belize Dollar",
-		"code": "BZD"
+		"code": "BZD",
+		"isoCode": "BZ"
 	},
 	{
 		"symbol": "CDF",
 		"name": "Congolese Franc",
-		"code": "CDF"
+		"code": "CDF",
+		"isoCode": "CD"
 	},
 	{
 		"symbol": "CHF",
 		"name": "Swiss Franc",
-		"code": "CHF"
+		"code": "CHF",
+		"isoCode": "CH"
 	},
 	{
 		"symbol": "CL$",
 		"name": "Chilean Peso",
-		"code": "CLP"
+		"code": "CLP",
+		"isoCode": "CL"
 
 	},
 	{
 		"symbol": "CN¥",
 		"name": "Chinese Yuan",
-		"code": "CNY"
+		"code": "CNY",
+		"isoCode": "CN"
 	},
 	{
 		"symbol": "CO$",
 		"name": "Colombian Peso",
-		"code": "COP"
+		"code": "COP",
+		"isoCode": "CO"
 	},
 	{
 		"symbol": "₡",
 		"name": "Costa Rican Colón",
-		"code": "CRC"
+		"code": "CRC",
+		"isoCode": "CR"
 	},
 	{
 		"symbol": "CV$",
 		"name": "Cape Verdean Escudo",
-		"code": "CVE"
+		"code": "CVE",
+		"isoCode": "CV"
 	},
 	{
 		"symbol": "Kč",
 		"name": "Czech Republic Koruna",
-		"code": "CZK"
+		"code": "CZK",
+		"isoCode": "CZ"
 	},
 	{
 		"symbol": "Fdj",
 		"name": "Djiboutian Franc",
-		"code": "DJF"
+		"code": "DJF",
+		"isoCode": "DJ"
 	},
 	{
 		"symbol": "Dkr",
 		"name": "Danish Krone",
-		"code": "DKK"
+		"code": "DKK",
+		"isoCode": "DK"
 	},
 	{
 		"symbol": "RD$",
 		"name": "Dominican Peso",
-		"code": "DOP"
+		"code": "DOP",
+		"isoCode": "DO"
 	},
 	{
 		"symbol": "DA",
 		"name": "Algerian Dinar",
-		"code": "DZD"
+		"code": "DZD",
+		"isoCode": "DZ"
 	},
 	{
 		"symbol": "Ekr",
 		"name": "Estonian Kroon",
-		"code": "EEK"
+		"code": "EEK",
+		"isoCode": "EE"
 	},
 	{
 		"symbol": "EGP",
 		"name": "Egyptian Pound",
-		"code": "EGP"
+		"code": "EGP",
+		"isoCode": "EG"
 	},
 	{
 		"symbol": "Nfk",
 		"name": "Eritrean Nakfa",
-		"code": "ERN"
+		"code": "ERN",
+		"isoCode": "ER"
 	},
 	{
 		"symbol": "Br",
 		"name": "Ethiopian Birr",
-		"code": "ETB"
+		"code": "ETB",
+		"isoCode": "ET"
 	},
 	{
 		"symbol": "£",
 		"name": "British Pound Sterling",
-		"code": "GBP"
+		"code": "GBP",
+		"isoCode": "GB"
 	},
 	{
 		"symbol": "GEL",
 		"name": "Georgian Lari",
-		"code": "GEL"
+		"code": "GEL",
+		"isoCode": "GE"
 	},
 	{
 		"symbol": "GH₵",
 		"name": "Ghanaian Cedi",
-		"code": "GHS"
+		"code": "GHS",
+		"isoCode": "GH"
 	},
 	{
 		"symbol": "FG",
 		"name": "Guinean Franc",
-		"code": "GNF"
+		"code": "GNF",
+		"isoCode": "GN"
 	},
 	{
 		"symbol": "GTQ",
 		"name": "Guatemalan Quetzal",
-		"code": "GTQ"
+		"code": "GTQ",
+		"isoCode": "GT"
 	},
 	{
 		"symbol": "HK$",
 		"name": "Hong Kong Dollar",
-		"code": "HKD"
+		"code": "HKD",
+		"isoCode": "HK"
 	},
 	{
 		"symbol": "HNL",
 		"name": "Honduran Lempira",
-		"code": "HNL"
+		"code": "HNL",
+		"isoCode": "HN"
 	},
 	{
 		"symbol": "kn",
 		"name": "Croatian Kuna",
-		"code": "HRK"
+		"code": "HRK",
+		"isoCode": "HR"
 	},
 	{
 		"symbol": "Ft",
 		"name": "Hungarian Forint",
-		"code": "HUF"
+		"code": "HUF",
+		"isoCode": "HU"
 	},
 	{
 		"symbol": "Rp",
 		"name": "Indonesian Rupiah",
-		"code": "IDR"
+		"code": "IDR",
+		"isoCode": "ID"
 	},
 	{
 		"symbol": "₪",
 		"name": "Israeli New Sheqel",
-		"code": "ILS"
+		"code": "ILS",
+		"isoCode": "IL"
 	},
 	{
 		"symbol": "Rs",
 		"name": "Indian Rupee",
-		"code": "INR"
+		"code": "INR",
+		"isoCode": "IN"
 	},
 	{
 		"symbol": "IQD",
 		"name": "Iraqi Dinar",
-		"code": "IQD"
+		"code": "IQD",
+		"isoCode": "IQ"
 	},
 	{
 		"symbol": "IRR",
 		"name": "Iranian Rial",
-		"code": "IRR"
+		"code": "IRR",
+		"isoCode": "IR"
 	},
 	{
 		"symbol": "Ikr",
 		"name": "Icelandic Króna",
-		"code": "ISK"
+		"code": "ISK",
+		"isoCode": "IS"
 	},
 	{
 		"symbol": "J$",
 		"name": "Jamaican Dollar",
-		"code": "JMD"
+		"code": "JMD",
+		"isoCode": "JM"
 	},
 	{
 		"symbol": "JD",
 		"name": "Jordanian Dinar",
-		"code": "JOD"
+		"code": "JOD",
+		"isoCode": "JO"
 	},
 	{
 		"symbol": "¥",
 		"name": "Japanese Yen",
-		"code": "JPY"
+		"code": "JPY",
+		"isoCode": "JP"
 	},
 	{
 		"symbol": "Ksh",
 		"name": "Kenyan Shilling",
-		"code": "KES"
+		"code": "KES",
+		"isoCode": "KE"
 	},
 	{
 		"symbol": "KHR",
 		"name": "Cambodian Riel",
-		"code": "KHR"
+		"code": "KHR",
+		"isoCode": "KH"
 	},
 	{
 		"symbol": "CF",
 		"name": "Comorian Franc",
-		"code": "KMF"
+		"code": "KMF",
+		"isoCode": "KM"
 	},
 	{
 		"symbol": "₩",
 		"name": "South Korean Won",
-		"code": "KRW"
+		"code": "KRW",
+		"isoCode": "KR"
 	},
 	{
 		"symbol": "KD",
 		"name": "Kuwaiti Dinar",
-		"code": "KWD"
+		"code": "KWD",
+		"isoCode": "KW"
 	},
 	{
 		"symbol": "KZT",
 		"name": "Kazakhstani Tenge",
-		"code": "KZT"
+		"code": "KZT",
+		"isoCode": "KZ"
 	},
 	{
 		"symbol": "L.L.",
 		"name": "Lebanese Pound",
-		"code": "LBP"
+		"code": "LBP",
+		"isoCode": "LB"
 	},
 	{
 		"symbol": "SLRs",
 		"name": "Sri Lankan Rupee",
-		"code": "LKR"
+		"code": "LKR",
+		"isoCode": "LK"
 	},
 	{
 		"symbol": "Lt",
 		"name": "Lithuanian Litas",
-		"code": "LTL"
+		"code": "LTL",
+		"isoCode": "LT"
 	},
 	{
 		"symbol": "Ls",
 		"name": "Latvian Lats",
-		"code": "LVL"
+		"code": "LVL",
+		"isoCode": "LV"
 	},
 	{
 		"symbol": "LD",
 		"name": "Libyan Dinar",
-		"code": "LYD"
+		"code": "LYD",
+		"isoCode": "LY"
 	},
 	{
 		"symbol": "MAD",
 		"name": "Moroccan Dirham",
-		"code": "MAD"
+		"code": "MAD",
+		"isoCode": "MA"
 	},
 	{
 		"symbol": "MDL",
 		"name": "Moldovan Leu",
-		"code": "MDL"
+		"code": "MDL",
+		"isoCode": "MD"
 	},
 	{
 		"symbol": "MGA",
 		"name": "Malagasy Ariary",
-		"code": "MGA"
+		"code": "MGA",
+		"isoCode": "MG"
 	},
 	{
 		"symbol": "MKD",
 		"name": "Macedonian Denar",
-		"code": "MKD"
+		"code": "MKD",
+		"isoCode": "MK"
 	},
 	{
 		"symbol": "MMK",
 		"name": "Myanma Kyat",
-		"code": "MMK"
+		"code": "MMK",
+		"isoCode": "MM"
 	},
 	{
 		"symbol": "MOP$",
 		"name": "Macanese Pataca",
-		"code": "MOP"
+		"code": "MOP",
+		"isoCode": "MO"
 	},
 	{
 		"symbol": "MURs",
 		"name": "Mauritian Rupee",
-		"code": "MUR"
+		"code": "MUR",
+		"isoCode": "MU"
 	},
 	{
 		"symbol": "MX$",
 		"name": "Mexican Peso",
-		"code": "MXN"
+		"code": "MXN",
+		"isoCode": "MX"
 	},
 	{
 		"symbol": "RM",
 		"name": "Malaysian Ringgit",
-		"code": "MYR"
+		"code": "MYR",
+		"isoCode": "MY"
 	},
 	{
 		"symbol": "MTn",
 		"name": "Mozambican Metical",
-		"code": "MZN"
+		"code": "MZN",
+		"isoCode": "MZ"
 	},
 	{
 		"symbol": "N$",
 		"name": "Namibian Dollar",
-		"code": "NAD"
+		"code": "NAD",
+		"isoCode": "NA"
 	},
 	{
 		"symbol": "₦",
 		"name": "Nigerian Naira",
-		"code": "NGN"
+		"code": "NGN",
+		"isoCode": "NG"
 	},
 	{
 		"symbol": "C$",
 		"name": "Nicaraguan Córdoba",
-		"code": "NIO"
+		"code": "NIO",
+		"isoCode": "NI"
 	},
 	{
 		"symbol": "Nkr",
 		"name": "Norwegian Krone",
-		"code": "NOK"
+		"code": "NOK",
+		"isoCode": "NO"
 	},
 	{
 		"symbol": "NPRs",
 		"name": "Nepalese Rupee",
-		"code": "NPR"
+		"code": "NPR",
+		"isoCode": "NP"
 	},
 	{
 		"symbol": "NZ$",
 		"name": "New Zealand Dollar",
-		"code": "NZD"
+		"code": "NZD",
+		"isoCode": "NZ"
 	},
 	{
 		"symbol": "OMR",
 		"name": "Omani Rial",
-		"code": "OMR"
+		"code": "OMR",
+		"isoCode": "OM"
 	},
 	{
 		"symbol": "B/.",
 		"name": "Panamanian Balboa",
-		"code": "PAB"
+		"code": "PAB",
+		"isoCode": "PA"
 	},
 	{
 		"symbol": "S/.",
 		"name": "Peruvian Nuevo Sol",
-		"code": "PEN"
+		"code": "PEN",
+		"isoCode": "PE"
 	},
 	{
 		"symbol": "₱",
 		"name": "Philippine Peso",
-		"code": "PHP"
+		"code": "PHP",
+		"isoCode": "PH"
 	},
 	{
 		"symbol": "PKRs",
 		"name": "Pakistani Rupee",
-		"code": "PKR"
+		"code": "PKR",
+		"isoCode": "PK"
 	},
 	{
 		"symbol": "zł",
 		"name": "Polish Zloty",
-		"code": "PLN"
+		"code": "PLN",
+		"isoCode": "PL"
 	},
 	{
 		"symbol": "₲",
 		"name": "Paraguayan Guarani",
-		"code": "PYG"
+		"code": "PYG",
+		"isoCode": "PY"
 	},
 	{
 		"symbol": "QR",
 		"name": "Qatari Rial",
-		"code": "QAR"
+		"code": "QAR",
+		"isoCode": "QA"
 	},
 	{
 		"symbol": "RON",
 		"name": "Romanian Leu",
-		"code": "RON"
+		"code": "RON",
+		"isoCode": "RO"
 	},
 	{
 		"symbol": "din.",
 		"name": "Serbian Dinar",
-		"code": "RSD"
+		"code": "RSD",
+		"isoCode": "RS"
 	},
 	{
 		"symbol": "RUB",
 		"name": "Russian Ruble",
-		"code": "RUB"
+		"code": "RUB",
+		"isoCode": "RU"
 	},
 	{
 		"symbol": "RWF",
 		"name": "Rwandan Franc",
-		"code": "RWF"
+		"code": "RWF",
+		"isoCode": "RW"
 	},
 	{
 		"symbol": "SR",
 		"name": "Saudi Riyal",
-		"code": "SAR"
+		"code": "SAR",
+		"isoCode": "SA"
 	},
 	{
 		"symbol": "SDG",
 		"name": "Sudanese Pound",
-		"code": "SDG"
+		"code": "SDG",
+		"isoCode": "SD"
 	},
 	{
 		"symbol": "Skr",
 		"name": "Swedish Krona",
-		"code": "SEK"
+		"code": "SEK",
+		"isoCode": "SE"
 	},
 	{
 		"symbol": "S$",
 		"name": "Singapore Dollar",
-		"code": "SGD"
+		"code": "SGD",
+		"isoCode": "SG"
 	},
 	{
 		"symbol": "Ssh",
 		"name": "Somali Shilling",
-		"code": "SOS"
+		"code": "SOS",
+		"isoCode": "SO"
 	},
 	{
 		"symbol": "SY£",
 		"name": "Syrian Pound",
-		"code": "SYP"
+		"code": "SYP",
+		"isoCode": "SY"
 	},
 	{
 		"symbol": "฿",
 		"name": "Thai Baht",
-		"code": "THB"
+		"code": "THB",
+		"isoCode": "TH"
 	},
 	{
 		"symbol": "DT",
 		"name": "Tunisian Dinar",
-		"code": "TND"
+		"code": "TND",
+		"isoCode": "TN"
 	},
 	{
 		"symbol": "T$",
 		"name": "Tongan Paʻanga",
-		"code": "TOP"
+		"code": "TOP",
+		"isoCode": "TO"
 	},
 	{
 		"symbol": "TL",
 		"name": "Turkish Lira",
-		"code": "TRY"
+		"code": "TRY",
+		"isoCode": "TR"
 	},
 	{
 		"symbol": "TT$",
 		"name": "Trinidad and Tobago Dollar",
-		"code": "TTD"
+		"code": "TTD",
+		"isoCode": "TT"
 	},
 	{
 		"symbol": "NT$",
 		"name": "New Taiwan Dollar",
-		"code": "TWD"
+		"code": "TWD",
+		"isoCode": "TW"
 	},
 	{
 		"symbol": "TSh",
 		"name": "Tanzanian Shilling",
-		"code": "TZS"
+		"code": "TZS",
+		"isoCode": "TZ"
 	},
 	{
 		"symbol": "₴",
 		"name": "Ukrainian Hryvnia",
-		"code": "UAH"
+		"code": "UAH",
+		"isoCode": "UA"
 	},
 	{
 		"symbol": "USh",
 		"name": "Ugandan Shilling",
-		"code": "UGX"
+		"code": "UGX",
+		"isoCode": "UG"
 	},
 	{
 		"symbol": "$U",
 		"name": "Uruguayan Peso",
-		"code": "UYU"
+		"code": "UYU",
+		"isoCode": "UY"
 	},
 	{
 		"symbol": "UZS",
 		"name": "Uzbekistan Som",
-		"code": "UZS"
+		"code": "UZS",
+		"isoCode": "UZ"
 	},
 	{
 		"symbol": "Bs.F.",
 		"name": "Venezuelan Bolívar",
-		"code": "VEF"
+		"code": "VEF",
+		"isoCode": "VE"
 	},
 	{
 		"symbol": "₫",
 		"name": "Vietnamese Dong",
-		"code": "VND"
+		"code": "VND",
+		"isoCode": "VN"
 	},
 	{
 		"symbol": "FCFA",
 		"name": "CFA Franc BEAC",
-		"code": "XAF"
+		"code": "XAF",
+		"isoCode": "XA"
 	},
 	{
 		"symbol": "CFA",
 		"name": "CFA Franc BCEAO",
-		"code": "XOF"
+		"code": "XOF",
+		"isoCode": "XO"
 	},
 	{
 		"symbol": "YR",
 		"name": "Yemeni Rial",
-		"code": "YER"
+		"code": "YER",
+		"isoCode": "YE"
 	},
 	{
 		"symbol": "R",
 		"name": "South African Rand",
-		"code": "ZAR"
+		"code": "ZAR",
+		"isoCode": "ZA"
 	},
 	{
 		"symbol": "ZK",
 		"name": "Zambian Kwacha",
-		"code": "ZMK"
+		"code": "ZMK",
+		"isoCode": "ZM"
 	},
 	{
 		"symbol": "ZWL$",
 		"name": "Zimbabwean Dollar",
-		"code": "ZWL"
+		"code": "ZWL",
+		"isoCode": "ZW"
 	}
 ]

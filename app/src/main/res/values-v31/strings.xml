@@ -3,4 +3,5 @@
     <string name="convert">Convert</string>
     <string name="pkr">PKR</string>
     <string name="chart">Chart</string>
+    <string name="country_flg">country_flg</string>
 </resources>

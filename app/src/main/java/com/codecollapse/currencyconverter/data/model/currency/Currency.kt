@@ -15,8 +15,9 @@ data class Currency(
     @PrimaryKey
     var to: String,
     var result: Double,
+    var isoCode : String,
     val success: Boolean,
     val isFirst : Boolean
 ){
-    constructor() : this(name = "",symbol = "",date = "", rate = 0.0, timestamp = 0, amount = 0, from = "", to = "", result = 0.0, success = false,isFirst = false)
+    constructor() : this(name = "",symbol = "",date = "", rate = 0.0, timestamp = 0, amount = 0, from = "", to = "", result = 0.0, isoCode = "", success = false,isFirst = false)
 }

@@ -45,7 +45,7 @@ class ExchangeRateViewModel @Inject constructor(
                     if(it.data.isEmpty().not()){
                         currencies.value = it.data
                         _fromCountryCode.value = currencies.value.first().from
-                        _enterAmount.value = currencies.value.first().amount
+                       // _enterAmount.value = currencies.value.first().amount
 
                     }
                     RateConverterUiState.Success(it.data.toList())
@@ -71,6 +71,12 @@ class ExchangeRateViewModel @Inject constructor(
             currencies.value = commonCurrencyRepository.getCurrenciesWithUpdatedValues(amount)
             _fromCountryCode.value = currencies.value.first().from
             _enterAmount.value = amount
+        }
+    }
+
+    fun removeCurrency(currencyName : String){
+        viewModelScope.launch(IO) {
+            commonCurrencyRepository.removeCurrency(currencyName)
         }
     }
 }

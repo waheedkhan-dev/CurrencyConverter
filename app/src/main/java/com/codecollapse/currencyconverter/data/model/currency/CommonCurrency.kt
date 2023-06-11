@@ -7,9 +7,11 @@ import android.os.Parcelable
 data class CommonCurrency(
     val code: String,
     val name: String,
-    val symbol: String
+    val symbol: String,
+    val isoCode : String
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readString().toString()
@@ -20,6 +22,7 @@ data class CommonCurrency(
         parcel.writeString(code)
         parcel.writeString(name)
         parcel.writeString(symbol)
+        parcel.writeString(isoCode)
     }
 
     override fun describeContents(): Int {

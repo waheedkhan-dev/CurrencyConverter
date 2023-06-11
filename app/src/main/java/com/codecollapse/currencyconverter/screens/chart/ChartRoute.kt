@@ -81,9 +81,10 @@ fun ChartRoute(
 
     val fluctuationState by currencyViewModel.fluctuationUiState
         .collectAsStateWithLifecycle()
+    val changeRateValue by currencyViewModel.changeRateValue.collectAsStateWithLifecycle()
     val currencyList = currencyViewModel.getCurrencyList()
     val defaultSelectedCurrency by currencyViewModel.defaultCurrency.collectAsStateWithLifecycle()
-    BottomSheet(currencyList.toList(), fluctuationState, defaultSelectedCurrency)
+    BottomSheet(currencyList.toList(), fluctuationState, defaultSelectedCurrency,changeRateValue)
 
 }
 
@@ -92,7 +93,8 @@ fun ChartRoute(
 private fun BottomSheet(
     currency: List<CommonCurrency>,
     fluctuationState: FluctuationUiState,
-    defaultSelectedCurrency: Currency
+    defaultSelectedCurrency: Currency,
+    changeRateValue : String
 ) {
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -111,7 +113,7 @@ private fun BottomSheet(
                     .heightIn(min = 100.dp, max = 500.dp)
                     .background(Color.White.copy(0.2f))
                     .padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = CenterHorizontally
             ) {
                 Spacer(//Using this to create a kind of Icon that tells the user that the sheet is expandable
                     modifier = Modifier
@@ -126,7 +128,7 @@ private fun BottomSheet(
                 Text(
                     modifier = Modifier
                         .padding(8.dp)
-                        .align(alignment = Alignment.CenterHorizontally),
+                        .align(alignment = CenterHorizontally),
                     text = "Select currency", style = TextStyle(
                         textAlign = TextAlign.Start,
                         fontWeight = FontWeight.Normal,
@@ -152,7 +154,7 @@ private fun BottomSheet(
             }
         }
     ) {
-        DrawChartComposable(modalSheetState, scope, fluctuationState, defaultSelectedCurrency)
+        DrawChartComposable(modalSheetState, scope, fluctuationState, defaultSelectedCurrency,changeRateValue)
     }
 }
 
@@ -162,7 +164,8 @@ fun DrawChartComposable(
     sheetState: ModalBottomSheetState,
     scope: CoroutineScope,
     fluctuationState: FluctuationUiState,
-    defaultSelectedCurrency: Currency
+    defaultSelectedCurrency: Currency,
+    changeRateValue : String
 ) {
 
     Column(
@@ -175,7 +178,7 @@ fun DrawChartComposable(
         Text(
             modifier = Modifier
                 .padding(8.dp)
-                .align(alignment = Alignment.CenterHorizontally),
+                .align(alignment = CenterHorizontally),
             text = "Chart", style = TextStyle(
                 textAlign = TextAlign.Start,
                 fontFamily = FontFamily(Font(R.font.montserrat_semi_bold, FontWeight.W400)),
@@ -308,7 +311,7 @@ fun DrawChartComposable(
                 Text(
                     modifier = Modifier
                         .padding(8.dp)
-                        .align(alignment = Alignment.CenterHorizontally),
+                        .align(alignment = CenterHorizontally),
                     text = "1 ${defaultSelectedCurrency.from} = ${defaultSelectedCurrency.rate} ${defaultSelectedCurrency.to}",
                     style = TextStyle(
                         textAlign = TextAlign.Start,
@@ -319,8 +322,8 @@ fun DrawChartComposable(
                 )
                 Text(
                     modifier = Modifier
-                        .align(alignment = Alignment.CenterHorizontally),
-                    text = "-0.003 past month", style = TextStyle(
+                        .align(alignment = CenterHorizontally),
+                    text = changeRateValue, style = TextStyle(
                         textAlign = TextAlign.Start,
                         fontFamily = FontFamily(Font(R.font.montserrat_medium, FontWeight.W200)),
                         fontSize = 14.sp,
@@ -387,7 +390,7 @@ fun LineChartView(fluctuationState: FluctuationUiState) {
         FluctuationUiState.Loading -> {
             Column(
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = CenterHorizontally
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(alignment = CenterHorizontally)
@@ -419,7 +422,7 @@ fun LineChartView(fluctuationState: FluctuationUiState) {
             )
         }
 
-        FluctuationUiState.Error -> {
+        is FluctuationUiState.Error -> {
 
         }
     }

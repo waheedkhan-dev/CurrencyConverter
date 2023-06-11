@@ -28,6 +28,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    defaultConfig {
+        vectorDrawables.useSupportLibrary = true
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -129,6 +134,9 @@ dependencies {
 
     //Charts
     implementation('io.github.bytebeats:compose-charts:0.1.2')
+
+    //Country Flags
+    implementation 'com.github.blongho:worldCountryData:1.5.4-alpha-1'
   //  implementation "com.github.tehras:charts:0.2.4-alpha"
 }
 

@@ -8,6 +8,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.blongho.country_data.World
 import com.codecollapse.currencyconverter.utils.Constants.CC_WORK
 import com.codecollapse.currencyconverter.work.ExchangeRateWorker
 import dagger.hilt.android.HiltAndroidApp
@@ -21,6 +22,7 @@ open class CCApplication : Application(), Configuration.Provider {
     lateinit var workerFactory: HiltWorkerFactory
     override fun onCreate() {
         super.onCreate()
+        World.init(applicationContext)
         setTimberConfiguration()
       //  setUpPeriodicWorkRequest()
     }

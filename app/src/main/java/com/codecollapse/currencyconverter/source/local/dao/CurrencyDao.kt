@@ -17,4 +17,7 @@ interface CurrencyDao {
     fun getCurrency(isFirst : Boolean) : Currency
     @Query("SELECT * FROM currency_table ORDER BY isFirst DESC")
     fun getAddedCurrencies(): Flow<List<Currency>>
+
+    @Query("DELETE FROM currency_table where `to`=:currencyName")
+    fun removeCurrency(currencyName : String)
 }

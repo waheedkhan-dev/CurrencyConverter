@@ -126,7 +126,8 @@ fun CountryRow(
                     } else {
                         currencyViewModel.addCurrency(
                             name = currencyList[it].name, code = currencyList[it].code,
-                            symbol = currencyList[it].symbol
+                            symbol = currencyList[it].symbol,
+                            isoCode = currencyList[it].isoCode
                         )
                     }
 

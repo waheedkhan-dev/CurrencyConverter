@@ -56,7 +56,7 @@ class CommonCurrencyRepository @Inject constructor(
         }
     }
 
-    fun addCurrency(name:String,code : String,symbols: String) {
+    fun addCurrency(name:String,code : String,symbols: String,isoCode : String) {
         val amount = runBlocking { dataStoreRepositoryImpl.getAmount().getOrNull() }!!
         val rateAsPerBaseCurrency = exchangeRateDao.getLatestExchangeRatesFromDb()
         val currencyMatch = rateAsPerBaseCurrency.rates.filter {
@@ -67,6 +67,7 @@ class CommonCurrencyRepository @Inject constructor(
             currency.name = name
             currency.symbol = symbols
             currency.to = code
+            currency.isoCode = isoCode
             currency.from = rateAsPerBaseCurrency.base
             currency.date = rateAsPerBaseCurrency.date
             currency.rate = currencyMatch[currency.to]!!
@@ -81,49 +82,6 @@ class CommonCurrencyRepository @Inject constructor(
         currencyDao.getAddedCurrencies().collect {
             emit(it)
         }
-        /* val currenciesList = arrayListOf<Currency>()
-         val baseCurrency = runBlocking { dataStoreRepositoryImpl.getBaseCurrency().getOrNull() }!!
-         Timber.d("baseCurrency :$baseCurrency")
-         val amount = runBlocking { dataStoreRepositoryImpl.getAmount().getOrNull() }!!
-
-         var symbols = ""
-         currencies.forEach {
-             symbols = symbols.plus(it.to).plus(",")
-         }
-
-         exchangeRateRepositoryImpl.getLatestExchangeRates(
-             Constants.API_KEY, baseCurrency, symbols
-         ).collect { exchangeRate ->
-             if (currencies.isEmpty().not()) {
-                 currencies.forEachIndexed { _, currency ->
-                     currency.date = exchangeRate.date
-                     currency.rate = exchangeRate.rates[currency.to]!!
-                     currency.timestamp = exchangeRate.timestamp
-                     currency.amount = amount
-                     currency.from = exchangeRate.base
-                     currency.result = amount.times(exchangeRate.rates[currency.to]!!)
-                     currencyDao.insertCurrency(currency)
-                     currenciesList.add(currency)
-                 }
-             } else {
-                 val currency = Currency(
-                     name = "US Dollar",
-                     symbol = "$",
-                     date = exchangeRate.date,
-                     rate = exchangeRate.rates["USD"]!!,
-                     timestamp = exchangeRate.timestamp,
-                     amount = amount,
-                     from = exchangeRate.base,
-                     to = "USD",
-                     result = amount.times(exchangeRate.rates["USD"]!!),
-                     success = exchangeRate.success,
-                     isFirst = true
-                 )
-                 currencyDao.insertCurrency(currency)
-                 currenciesList.add(currency)
-             }
-         }
-         emit(currenciesList)*/
     }.flowOn(IO)
 
     suspend fun getCurrenciesWithUpdatedValues(amount: Int): List<Currency> {
@@ -138,5 +96,9 @@ class CommonCurrencyRepository @Inject constructor(
         return flow {
             emit(currencyDao.getCurrency(isFirst))
         }.flowOn(IO)
+    }
+
+    fun removeCurrency(currencyName : String){
+        currencyDao.removeCurrency(currencyName)
     }
 }

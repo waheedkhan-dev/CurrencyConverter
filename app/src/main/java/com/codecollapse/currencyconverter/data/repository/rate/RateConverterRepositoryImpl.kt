@@ -34,6 +34,7 @@ class RateConverterRepositoryImpl @Inject constructor(
                     from = rateConverter.query.from,
                     to = rateConverter.query.to,
                     result = rateConverter.query.amount.times(rateConverter.info.rate),
+                    isoCode = "",
                     success = rateConverter.success,
                     isFirst = true
                 )

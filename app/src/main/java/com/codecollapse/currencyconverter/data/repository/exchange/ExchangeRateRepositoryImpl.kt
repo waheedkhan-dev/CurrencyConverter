@@ -47,6 +47,7 @@ class ExchangeRateRepositoryImpl @Inject constructor(
                     from = exchangeRate.base,
                     to = "USD",
                     result = defaultAmount.times(exchangeRate.rates["USD"]!!),
+                    isoCode = "US",
                     success = exchangeRate.success,
                     isFirst = true
                 )

@@ -34,12 +34,14 @@ class CurrencyViewModel @Inject constructor(
 
     private val _defaultCurrency = MutableStateFlow(runBlocking { Currency() })
     var defaultCurrency: StateFlow<Currency> = _defaultCurrency.asStateFlow()
+    private val _changeRateValue = MutableStateFlow("past month")
+    var changeRateValue : StateFlow<String> = _changeRateValue.asStateFlow()
 
     fun getCurrencyList() = commonCurrencyRepository.getCurrencyList()
 
-    fun addCurrency(name: String, code: String, symbol: String) {
+    fun addCurrency(name: String, code: String, symbol: String,isoCode : String) {
         viewModelScope.launch(IO) {
-            commonCurrencyRepository.addCurrency(name, code, symbol)
+            commonCurrencyRepository.addCurrency(name, code, symbol,isoCode)
         }
     }
 
@@ -68,6 +70,7 @@ class CurrencyViewModel @Inject constructor(
                 }
 
                 is Resource.Success -> {
+                    _changeRateValue.value = "${it.data.rates.USD.change} past month"
                     FluctuationUiState.Success(it.data)
                 }
 
