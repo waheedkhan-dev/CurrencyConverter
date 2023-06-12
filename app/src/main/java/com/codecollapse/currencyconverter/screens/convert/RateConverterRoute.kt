@@ -2,10 +2,8 @@ package com.codecollapse.currencyconverter.screens.convert
 
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,16 +16,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.requiredHeightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,7 +48,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -90,88 +91,108 @@ fun RateConverterRoute(
                 currencies = updateValues
             }
             if (currencies.isEmpty().not()) {
-                Column(
+
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(colorResource(id = R.color.card_background_color))
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .requiredHeight(160.dp)
-                            .background(
-                                colorResource(id = R.color.background_color)
-                            )
-                    ) {
-                        Column() {
-                            Text(
-                                modifier = Modifier.padding(12.dp),
-                                text = "Welcome,Back",
-                                style = TextStyle(
-                                    textAlign = TextAlign.Center,
-                                    fontSize = 22.sp,
-                                    fontFamily = FontFamily(
-                                        Font(
-                                            R.font.montserrat_semi_bold,
-                                            FontWeight.W400
-                                        )
-                                    ),
-                                    color = colorResource(id = R.color.card_background_color)
-                                )
-                            )
-                            Spacer(modifier = Modifier.height(18.dp))
-                            RateConvertComposable(
-                                navController = navController,
-                                amount = enterAmount,
-                                fromCountry = fromCountryCode,
-                                exchangeRateViewModel = exchangeRateViewModel
-                            )
-                        }
 
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    if (currencies.isEmpty().not()) {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxWidth(),
-                            state = listState,
-                            contentPadding = PaddingValues(8.dp)
-                        ) {
-                            items(currencies.size) {
-                                AddedCurrencyComposable(
-                                    currency = currencies[it],
-                                    exchangeRateViewModel::removeCurrency
-                                )
-                            }
-                        }
-
-                    }
-                    Button(modifier = Modifier
-                        .padding(12.dp),
-                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.to_light_green)),
-                        shape = RoundedCornerShape(8.dp),
-                        onClick = {
-                            navController.navigate("currency_screen_route/".plus(false))
-                        }) {
-                        Text(
-                            text = "Add currency",
-                            style = TextStyle(
-                                textAlign = TextAlign.Center,
-                                fontSize = 12.sp,
-                                fontFamily = FontFamily(
-                                    Font(
-                                        R.font.montserrat_medium,
-                                        FontWeight.W300
+                    item {
+                        Column{
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .requiredHeight(160.dp)
+                                    .background(
+                                        colorResource(id = R.color.background_color)
                                     )
-                                ),
-                                color = colorResource(id = R.color.color_header_text)
-                            )
-                        )
-                    }
+                            ) {
+                                Column {
+                                    Text(
+                                        modifier = Modifier.padding(12.dp),
+                                        text = "Welcome,Back",
+                                        style = TextStyle(
+                                            textAlign = TextAlign.Center,
+                                            fontSize = 22.sp,
+                                            fontFamily = FontFamily(
+                                                Font(
+                                                    R.font.montserrat_semi_bold,
+                                                    FontWeight.W400
+                                                )
+                                            ),
+                                            color = colorResource(id = R.color.card_background_color)
+                                        )
+                                    )
+                                    Spacer(modifier = Modifier.height(18.dp))
+                                    RateConvertComposable(
+                                        navController = navController,
+                                        amount = enterAmount,
+                                        fromCountry = fromCountryCode,
+                                        exchangeRateViewModel = exchangeRateViewModel
+                                    )
+                                }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .requiredHeightIn(50.dp, 600.dp),
+                                state = listState,
+                                contentPadding = PaddingValues(8.dp)
+                            ) {
+                                items(currencies.size) {
+                                    AddedCurrencyComposable(
+                                        currency = currencies[it],
+                                        exchangeRateViewModel::removeCurrency
+                                    )
+                                }
+                            }
+                            Button(modifier = Modifier
+                                .padding(12.dp),
+                                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.to_light_green)),
+                                shape = RoundedCornerShape(8.dp),
+                                onClick = {
+                                    navController.navigate("currency_screen_route/".plus(false))
+                                }) {
+                                Row(
+                                    verticalAlignment = CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.baseline_add_24),
+                                        contentDescription = stringResource(
+                                            R.string.button_icon
+                                        ),
+                                        tint = colorResource(
+                                            id = R.color.color_header_text
+                                        )
+                                    )
+                                    Text(
+                                        text = "Add currency",
+                                        style = TextStyle(
+                                            textAlign = TextAlign.Center,
+                                            fontSize = 12.sp,
+                                            fontFamily = FontFamily(
+                                                Font(
+                                                    R.font.montserrat_medium,
+                                                    FontWeight.W300
+                                                )
+                                            ),
+                                            color = colorResource(id = R.color.color_header_text)
+                                        )
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+                    }
                 }
+
             }
         }
 
@@ -189,7 +210,8 @@ fun AddedCurrencyComposable(
     onLongPress: (String) -> Unit
 ) {
     val context = LocalContext.current
-     val flag = World.getFlagOf(currency.isoCode)
+    val message = stringResource(R.string.unable_to_remove_default_currency)
+    val flag = World.getFlagOf(currency.isoCode)
 
     Box(
         modifier = Modifier
@@ -200,7 +222,7 @@ fun AddedCurrencyComposable(
                         onLongPress(currency.to)
                     } else {
                         Toast
-                            .makeText(context, "Unable to remove default currency.", Toast.LENGTH_SHORT)
+                            .makeText(context, message, Toast.LENGTH_SHORT)
                             .show()
                     }
 
@@ -221,12 +243,12 @@ fun AddedCurrencyComposable(
                 .fillMaxWidth()
                 .padding(12.dp)
         ) {
-             AsyncImage(
+            AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(flag)
                     .crossfade(true)
                     .build(),
-                 contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Crop,
                 placeholder = painterResource(R.drawable.pk),
                 contentDescription = stringResource(R.string.country_flg),
                 modifier = Modifier
@@ -268,7 +290,9 @@ fun AddedCurrencyComposable(
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
                 Text(
                     modifier = Modifier.align(Alignment.End),
-                    text = "${currency.symbol} ${String.format("%.3f", currency.result).toDouble()}",
+                    text = "${currency.symbol} ${
+                        String.format("%.3f", currency.result).toDouble()
+                    }",
                     style = TextStyle(
                         color = colorResource(id = R.color.color_header_text),
                         textAlign = TextAlign.Center,

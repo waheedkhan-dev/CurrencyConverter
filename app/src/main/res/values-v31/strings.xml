@@ -4,4 +4,6 @@
     <string name="pkr">PKR</string>
     <string name="chart">Chart</string>
     <string name="country_flg">country_flg</string>
+    <string name="unable_to_remove_default_currency">Unable to remove default currency.</string>
+    <string name="button_icon">button_icon</string>
 </resources>
