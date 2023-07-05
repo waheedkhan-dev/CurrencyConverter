@@ -53,7 +53,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.codecollapse.currencyconverter.R
-import com.codecollapse.currencyconverter.core.ui.fluctuation.FluctuationUiState
+import com.codecollapse.currencyconverter.core.ui.fluctuation.TimeSeriesUiState
 import com.codecollapse.currencyconverter.data.model.currency.CommonCurrency
 import com.codecollapse.currencyconverter.data.model.currency.Currency
 import com.codecollapse.currencyconverter.screens.currency.CurrencyViewModel
@@ -79,12 +79,12 @@ fun ChartRoute(
         //currencyViewModel.checkFluctuation("PKR", "USD")
     }
 
-    val fluctuationState by currencyViewModel.fluctuationUiState
+    val timeSeriesUiState by currencyViewModel.timeSeriesUiState
         .collectAsStateWithLifecycle()
     val changeRateValue by currencyViewModel.changeRateValue.collectAsStateWithLifecycle()
     val currencyList = currencyViewModel.getCurrencyList()
     val defaultSelectedCurrency by currencyViewModel.defaultCurrency.collectAsStateWithLifecycle()
-    BottomSheet(currencyList.toList(), fluctuationState, defaultSelectedCurrency,changeRateValue)
+    BottomSheet(currencyList.toList(), timeSeriesUiState, defaultSelectedCurrency, changeRateValue)
 
 }
 
@@ -92,9 +92,9 @@ fun ChartRoute(
 @Composable
 private fun BottomSheet(
     currency: List<CommonCurrency>,
-    fluctuationState: FluctuationUiState,
+    fluctuationState: TimeSeriesUiState,
     defaultSelectedCurrency: Currency,
-    changeRateValue : String
+    changeRateValue: String
 ) {
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -154,7 +154,13 @@ private fun BottomSheet(
             }
         }
     ) {
-        DrawChartComposable(modalSheetState, scope, fluctuationState, defaultSelectedCurrency,changeRateValue)
+        DrawChartComposable(
+            modalSheetState,
+            scope,
+            fluctuationState,
+            defaultSelectedCurrency,
+            changeRateValue
+        )
     }
 }
 
@@ -163,9 +169,9 @@ private fun BottomSheet(
 fun DrawChartComposable(
     sheetState: ModalBottomSheetState,
     scope: CoroutineScope,
-    fluctuationState: FluctuationUiState,
+    fluctuationState: TimeSeriesUiState,
     defaultSelectedCurrency: Currency,
-    changeRateValue : String
+    changeRateValue: String
 ) {
 
     Column(
@@ -334,7 +340,7 @@ fun DrawChartComposable(
         }
 
         Spacer(modifier = Modifier.height(40.dp))
-        LineChartView(fluctuationState = fluctuationState)
+        LineChartView(timeSeriesState = fluctuationState)
 
     }
 }
@@ -385,9 +391,9 @@ fun CurrencyListComposable(currencyList: List<CommonCurrency>) {
 }
 
 @Composable
-fun LineChartView(fluctuationState: FluctuationUiState) {
-    when (fluctuationState) {
-        FluctuationUiState.Loading -> {
+fun LineChartView(timeSeriesState: TimeSeriesUiState) {
+    when (timeSeriesState) {
+        TimeSeriesUiState.Loading -> {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = CenterHorizontally
@@ -398,31 +404,26 @@ fun LineChartView(fluctuationState: FluctuationUiState) {
             }
         }
 
-        is FluctuationUiState.Success -> {
+        is TimeSeriesUiState.Success -> {
+            val lineChartPoints = arrayListOf<LineChartData.Point>()
+            timeSeriesState.timeSeries.forEach {
+                lineChartPoints.add(LineChartData.Point(it.rates, it.date))
+            }
             LineChart(
                 lineChartData = LineChartData(
-                    points = listOf(
-                        LineChartData.Point(
-                            fluctuationState.currencyFluctuation.rates.USD.start_rate.toFloat(),
-                            fluctuationState.currencyFluctuation.start_date
-                        ),
-                        LineChartData.Point(
-                            fluctuationState.currencyFluctuation.rates.USD.end_rate.toFloat(),
-                            fluctuationState.currencyFluctuation.end_date
-                        ),
-                    )
+                    points = lineChartPoints
                 ),
                 modifier = Modifier.fillMaxSize(),
                 animation = simpleChartAnimation(),
-                pointDrawer = FilledCircularPointDrawer(),
-                lineDrawer = SolidLineDrawer(),
+                pointDrawer = FilledCircularPointDrawer(diameter = 8.dp,colorResource(id = R.color.background_color)),
+                lineDrawer = SolidLineDrawer(thickness = 2.dp, colorResource(id = R.color.light_green)),
                 xAxisDrawer = SimpleXAxisDrawer(),
                 yAxisDrawer = SimpleYAxisDrawer(),
                 horizontalOffset = 5f
             )
         }
 
-        is FluctuationUiState.Error -> {
+        is TimeSeriesUiState.Error -> {
 
         }
     }

@@ -4,7 +4,7 @@ import android.content.Context
 import com.codecollapse.currencyconverter.R
 import com.codecollapse.currencyconverter.data.model.currency.CommonCurrency
 import com.codecollapse.currencyconverter.data.model.currency.Currency
-import com.codecollapse.currencyconverter.data.model.currency.fluctuation.CurrencyFluctuation
+import com.codecollapse.currencyconverter.data.model.currency.timeseries.TimeSeries
 import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl
 import com.codecollapse.currencyconverter.data.repository.exchange.ExchangeRateRepositoryImpl
 import com.codecollapse.currencyconverter.network.CurrencyApi
@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.runBlocking
+import org.json.JSONObject
+import timber.log.Timber
 import java.io.BufferedReader
 import java.io.InputStream
 import javax.inject.Inject
@@ -40,18 +42,33 @@ class CommonCurrencyRepository @Inject constructor(
         return Gson().fromJson(jsonString, Array<CommonCurrency>::class.java)
     }
 
-    fun checkFluctuation(
+    fun checkTimeSeries(
         api_key: String,
         baseCurrency: String,
         symbols: String,
         start_date: String,
         end_date: String
-    ): Flow<CurrencyFluctuation> {
+    ): Flow<List<TimeSeries>> {
         return flow {
             val response =
-                currencyApi.checkFluctuation(api_key, baseCurrency, symbols, start_date, end_date)
+                currencyApi.checkTimeSeries(api_key, baseCurrency, symbols, start_date, end_date)
             if (response.isSuccessful) {
-                emit(response.body()!!)
+
+                val timeSeries = arrayListOf<TimeSeries>()
+                val jsonString = response.body()!!.string()
+                val jsonObject = JSONObject(jsonString)
+                val ratesObject = jsonObject.getJSONObject("rates")
+                ratesObject.keys().forEach { date->
+                    val timeSeriesDate = ratesObject.getJSONObject(date)
+                    timeSeriesDate.keys().forEach {
+                        val rates : Float = timeSeriesDate.getString(it).toFloat()
+                        timeSeries.add(TimeSeries(rates = rates, date = date))
+                        Timber.i("current rates $rates")
+                    }
+                }
+
+                emit(timeSeries)
+              //  emit(CurrencyFluctuation("","",true, Rates(USD(0.0,0.0,0.0,0.0)),"",true))
             }
         }
     }
@@ -87,8 +104,11 @@ class CommonCurrencyRepository @Inject constructor(
     suspend fun getCurrenciesWithUpdatedValues(amount: Int): List<Currency> {
         val currencies = currencyDao.getAddedCurrencies().first()
         currencies.forEach { currency ->
+            currency.amount = amount
             currency.result = currency.rate.times(amount)
+            currencyDao.insertCurrency(currency)
         }
+
         return currencies
     }
 

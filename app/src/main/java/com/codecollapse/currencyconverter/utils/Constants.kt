@@ -6,6 +6,6 @@ object Constants {
     const val API_KEY = "22f9xGHPWFN5eXBhPOL7Coq6kGCmRscq"
     const val CC_WORK = "ExchangeRateWork"
 
-    const val START_DATE = "2020-04-01"
-    const val END_DATE = "2023-05-01"
+    const val START_DATE = "2023-06-13"
+    const val END_DATE = "2023-07-01"
 }

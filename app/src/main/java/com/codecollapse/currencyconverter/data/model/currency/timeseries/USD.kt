@@ -1,4 +1,4 @@
-package com.codecollapse.currencyconverter.data.model.currency.fluctuation
+package com.codecollapse.currencyconverter.data.model.currency.timeseries
 
 data class USD(
     val change: Double,

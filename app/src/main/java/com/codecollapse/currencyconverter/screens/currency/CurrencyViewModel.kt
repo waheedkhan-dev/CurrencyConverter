@@ -2,7 +2,7 @@ package com.codecollapse.currencyconverter.screens.currency
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.codecollapse.currencyconverter.core.ui.fluctuation.FluctuationUiState
+import com.codecollapse.currencyconverter.core.ui.fluctuation.TimeSeriesUiState
 import com.codecollapse.currencyconverter.data.model.currency.Currency
 import com.codecollapse.currencyconverter.data.repository.CommonCurrencyRepository
 import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl
@@ -56,8 +56,8 @@ class CurrencyViewModel @Inject constructor(
     }
 
 
-    val fluctuationUiState: StateFlow<FluctuationUiState> =
-        commonCurrencyRepository.checkFluctuation(
+    val timeSeriesUiState: StateFlow<TimeSeriesUiState> =
+        commonCurrencyRepository.checkTimeSeries(
             Constants.API_KEY,
             runBlocking { dataStoreRepositoryImpl.getBaseCurrency().getOrNull() }!!,
             runBlocking { dataStoreRepositoryImpl.getTargetCurrency().getOrNull() }!!,
@@ -66,23 +66,23 @@ class CurrencyViewModel @Inject constructor(
         ).asResource().map {
             when (it) {
                 is Resource.Loading -> {
-                    FluctuationUiState.Loading
+                    TimeSeriesUiState.Loading
                 }
 
                 is Resource.Success -> {
-                    _changeRateValue.value = "${it.data.rates.USD.change} past month"
-                    FluctuationUiState.Success(it.data)
+                    _changeRateValue.value = "${it.data.first().rates} past month"
+                    TimeSeriesUiState.Success(it.data)
                 }
 
                 is Resource.Error -> {
                     Timber.d("FluctuationUiState.Error ${it.exception!!.message}")
-                    FluctuationUiState.Error
+                    TimeSeriesUiState.Error
                 }
             }
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = FluctuationUiState.Loading
+            initialValue = TimeSeriesUiState.Loading
         )
 
 }

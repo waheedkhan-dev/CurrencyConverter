@@ -42,7 +42,7 @@ class ExchangeRateViewModel @Inject constructor(
         commonCurrencyRepository.getAddedCurrencies().asResource().map {
             when (it) {
                 is Resource.Success -> {
-                    if(it.data.isEmpty().not()){
+                   if(it.data.isEmpty().not()){
                         currencies.value = it.data
                         _fromCountryCode.value = currencies.value.first().from
                        // _enterAmount.value = currencies.value.first().amount

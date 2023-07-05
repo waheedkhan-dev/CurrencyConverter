@@ -37,21 +37,24 @@ class ExchangeRateRepositoryImpl @Inject constructor(
                 )
             if (response.isSuccessful) {
                 val exchangeRate = response.body()!!
-                val currency = Currency(
-                    name = "US Dollar",
-                    symbol = "$",
-                    date = exchangeRate.date,
-                    rate = exchangeRate.rates["USD"]!!,
-                    timestamp = exchangeRate.timestamp,
-                    amount = defaultAmount,
-                    from = exchangeRate.base,
-                    to = "USD",
-                    result = defaultAmount.times(exchangeRate.rates["USD"]!!),
-                    isoCode = "US",
-                    success = exchangeRate.success,
-                    isFirst = true
-                )
-                currencyDao.insertCurrency(currency)
+                val isDeviceSync = dataStoreRepositoryImpl.getIsDeviceSync().getOrNull()
+                if(isDeviceSync!!.not()){
+                    val currency = Currency(
+                        name = "British Pound Sterling",
+                        symbol = "£",
+                        date = exchangeRate.date,
+                        rate = exchangeRate.rates["GBP"]!!,
+                        timestamp = exchangeRate.timestamp,
+                        amount = defaultAmount,
+                        from = exchangeRate.base,
+                        to = "GBP",
+                        result = defaultAmount.times(exchangeRate.rates["USD"]!!),
+                        isoCode = "GB",
+                        success = exchangeRate.success,
+                        isFirst = true
+                    )
+                    currencyDao.insertCurrency(currency)
+                }
                 exchangeRateDao.insertLatestExchangeRates(exchangeRate = exchangeRate)
                 emit(exchangeRateDao.getLatestExchangeRatesFromDb())
             }
@@ -84,6 +87,7 @@ class ExchangeRateRepositoryImpl @Inject constructor(
                     currency.result = defaultAmount.times(exchangeRate.rates[currency.to]!!)
                     currencyDao.insertCurrency(currency)
                 }
+                exchangeRateDao.insertLatestExchangeRates(exchangeRate = exchangeRate)
             }
         }
     }

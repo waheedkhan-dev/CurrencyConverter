@@ -68,7 +68,7 @@ class DataStoreRepositoryImpl @Inject constructor(private val ccDataStore: DataS
                     // Get our name value, defaulting to "" if not set
                     preferences[DEFAULT_BASE_CURRENCY]
                 }
-            val value = flow.firstOrNull() ?: "PKR" // we only care about the 1st value
+            val value = flow.firstOrNull() ?: "USD" // we only care about the 1st value
             value
         }
     }
@@ -90,7 +90,7 @@ class DataStoreRepositoryImpl @Inject constructor(private val ccDataStore: DataS
                 .map { preferences ->
                     preferences[DEFAULT_TARGET_CURRENCY]
                 }
-            val value = flow.firstOrNull() ?: "USD"
+            val value = flow.firstOrNull() ?: "GBP"
             value
         }
     }
