@@ -53,12 +53,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.codecollapse.currencyconverter.R
-import com.codecollapse.currencyconverter.core.ui.fluctuation.TimeSeriesUiState
+import com.codecollapse.currencyconverter.core.ui.convert.ConvertRatesUiState
+import com.codecollapse.currencyconverter.core.ui.timeseries.TimeSeriesUiState
 import com.codecollapse.currencyconverter.data.model.currency.CommonCurrency
-import com.codecollapse.currencyconverter.data.model.currency.Currency
 import com.codecollapse.currencyconverter.screens.currency.CurrencyViewModel
 import com.codecollapse.currencyconverter.screens.currency.SearchEditText
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import me.bytebeats.views.charts.line.LineChart
 import me.bytebeats.views.charts.line.LineChartData
 import me.bytebeats.views.charts.line.render.line.SolidLineDrawer
@@ -73,18 +74,13 @@ fun ChartRoute(
     navController: NavController,
     currencyViewModel: CurrencyViewModel = hiltViewModel()
 ) {
-
-    LaunchedEffect(Unit) {
-        currencyViewModel.getCurrency(true)
-        //currencyViewModel.checkFluctuation("PKR", "USD")
+    LaunchedEffect(Unit){
+        currencyViewModel.getRateConversion()
     }
-
-    val timeSeriesUiState by currencyViewModel.timeSeriesUiState
+    val rateConversionUiState by currencyViewModel.rateConversion
         .collectAsStateWithLifecycle()
-    val changeRateValue by currencyViewModel.changeRateValue.collectAsStateWithLifecycle()
     val currencyList = currencyViewModel.getCurrencyList()
-    val defaultSelectedCurrency by currencyViewModel.defaultCurrency.collectAsStateWithLifecycle()
-    BottomSheet(currencyList.toList(), timeSeriesUiState, defaultSelectedCurrency, changeRateValue)
+    BottomSheet(currencyList.toList(), rateConversionUiState, currencyViewModel)
 
 }
 
@@ -92,9 +88,8 @@ fun ChartRoute(
 @Composable
 private fun BottomSheet(
     currency: List<CommonCurrency>,
-    fluctuationState: TimeSeriesUiState,
-    defaultSelectedCurrency: Currency,
-    changeRateValue: String
+    rateConversionUiState: ConvertRatesUiState,
+    currencyViewModel: CurrencyViewModel
 ) {
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -147,9 +142,25 @@ private fun BottomSheet(
                     currency.name.contains(searchQuery, ignoreCase = true)
                 }
                 if (filteredList.isEmpty().not()) {
-                    CurrencyListComposable(currencyList = filteredList)
+                    CurrencyListComposable(
+                        sheetState = modalSheetState,
+                        scope = scope,
+                        currencyList = filteredList,
+                        isFromCountrySelected = currencyViewModel.isFromCountrySelected.value,
+                        currencyViewModel::setFromCountry,
+                        currencyViewModel::setToCountry,
+                        currencyViewModel::getRateConversion
+                    )
                 } else {
-                    CurrencyListComposable(currencyList = currency)
+                    CurrencyListComposable(
+                        sheetState = modalSheetState,
+                        scope = scope,
+                        currencyList = currency,
+                        isFromCountrySelected = currencyViewModel.isFromCountrySelected.value,
+                        currencyViewModel::setFromCountry,
+                        currencyViewModel::setToCountry,
+                        currencyViewModel::getRateConversion
+                    )
                 }
             }
         }
@@ -157,9 +168,8 @@ private fun BottomSheet(
         DrawChartComposable(
             modalSheetState,
             scope,
-            fluctuationState,
-            defaultSelectedCurrency,
-            changeRateValue
+            rateConversionUiState,
+            currencyViewModel::setIsFromCountrySelected
         )
     }
 }
@@ -169,9 +179,8 @@ private fun BottomSheet(
 fun DrawChartComposable(
     sheetState: ModalBottomSheetState,
     scope: CoroutineScope,
-    fluctuationState: TimeSeriesUiState,
-    defaultSelectedCurrency: Currency,
-    changeRateValue: String
+    rateConversionUiState: ConvertRatesUiState,
+    setIsFromCountrySelected: (Boolean) ->Unit
 ) {
 
     Column(
@@ -192,161 +201,208 @@ fun DrawChartComposable(
                 color = colorResource(id = R.color.color_header_text)
             )
         )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            Box(
-                modifier = Modifier
-                    .requiredWidth(150.dp)
-                    .padding(12.dp)
-                    .background(
-                        colorResource(id = R.color.white),
-                        RoundedCornerShape(12.dp)
-                    )
-                    .wrapContentHeight()
-                    .border(
-                        1.dp,
-                        colorResource(id = R.color.color_sub_text),
-                        RoundedCornerShape(12.dp)
-                    )
-                    .clickable {
-                        /* scope.launch {
-                            if (sheetState.isVisible)
-                                sheetState.hide()
-                            else
-                                sheetState.show()
-                        }*/
-                    },
-                contentAlignment = Alignment.Center
-            ) {
+
+        when (rateConversionUiState) {
+            ConvertRatesUiState.Loading -> {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(CenterHorizontally)
+                )
+            }
+
+            is ConvertRatesUiState.Success -> {
+                // val timeSeriesUiState by currencyViewModel.timeSeriesUiState.collectAsStateWithLifecycle()
                 Row(
-                    modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    Text(
-                        text = defaultSelectedCurrency.from,
-                        style = TextStyle(
-                            textAlign = TextAlign.Center,
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily(Font(R.font.montserrat_bold, FontWeight.W300)),
-                            color = colorResource(id = R.color.color_header_text)
-                        )
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Box(
+                        modifier = Modifier
+                            .requiredWidth(150.dp)
+                            .padding(12.dp)
+                            .background(
+                                colorResource(id = R.color.white),
+                                RoundedCornerShape(12.dp)
+                            )
+                            .wrapContentHeight()
+                            .border(
+                                1.dp,
+                                colorResource(id = R.color.color_sub_text),
+                                RoundedCornerShape(12.dp)
+                            )
+                            .clickable {
+                                scope.launch {
+                                    setIsFromCountrySelected(true)
+                                    if (sheetState.isVisible)
+                                        sheetState.hide()
+                                    else
+                                        sheetState.show()
+                                }
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = rateConversionUiState.rateConverter.query.from,
+                                style = TextStyle(
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 16.sp,
+                                    fontFamily = FontFamily(
+                                        Font(
+                                            R.font.montserrat_bold,
+                                            FontWeight.W300
+                                        )
+                                    ),
+                                    color = colorResource(id = R.color.color_header_text)
+                                )
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Icon(
+                                modifier = Modifier.align(Alignment.CenterVertically),
+                                painter = painterResource(id = R.drawable.round_keyboard_arrow_down_24),
+                                contentDescription = "arrow_down",
+                                tint = colorResource(id = R.color.color_header_text)
+                            )
+
+                        }
+                    }
+
                     Icon(
                         modifier = Modifier.align(Alignment.CenterVertically),
-                        painter = painterResource(id = R.drawable.round_keyboard_arrow_down_24),
-                        contentDescription = "arrow_down",
-                        tint = colorResource(id = R.color.color_header_text)
+                        painter = painterResource(id = R.drawable.baseline_compare_arrows_24),
+                        contentDescription = "compare_arrows",
+                        tint = colorResource(id = R.color.background_color)
                     )
 
+                    Box(
+                        modifier = Modifier
+                            .requiredWidth(150.dp)
+                            .padding(12.dp)
+                            .background(
+                                colorResource(id = R.color.white),
+                                RoundedCornerShape(12.dp)
+                            )
+                            .wrapContentHeight()
+                            .border(
+                                1.dp,
+                                colorResource(id = R.color.color_sub_text),
+                                RoundedCornerShape(12.dp)
+                            )
+                            .clickable {
+                                scope.launch {
+                                    setIsFromCountrySelected(false)
+                                    if (sheetState.isVisible)
+                                        sheetState.hide()
+                                    else
+                                        sheetState.show()
+                                }
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = rateConversionUiState.rateConverter.query.to,
+                                style = TextStyle(
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 16.sp,
+                                    fontFamily = FontFamily(
+                                        Font(
+                                            R.font.montserrat_bold,
+                                            FontWeight.W300
+                                        )
+                                    ),
+                                    color = colorResource(id = R.color.color_header_text)
+                                )
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Icon(
+                                modifier = Modifier.align(Alignment.CenterVertically),
+                                painter = painterResource(id = R.drawable.round_keyboard_arrow_down_24),
+                                contentDescription = "arrow_down",
+                                tint = colorResource(id = R.color.color_header_text)
+                            )
+
+                        }
+                    }
                 }
-            }
-
-            Icon(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                painter = painterResource(id = R.drawable.baseline_compare_arrows_24),
-                contentDescription = "compare_arrows",
-                tint = colorResource(id = R.color.background_color)
-            )
-
-            Box(
-                modifier = Modifier
-                    .requiredWidth(150.dp)
-                    .padding(12.dp)
-                    .background(
-                        colorResource(id = R.color.white),
-                        RoundedCornerShape(12.dp)
-                    )
-                    .wrapContentHeight()
-                    .border(
-                        1.dp,
-                        colorResource(id = R.color.color_sub_text),
-                        RoundedCornerShape(12.dp)
-                    )
-                    .clickable {
-                        /* scope.launch {
-                            if (sheetState.isVisible)
-                                sheetState.hide()
-                            else
-                                sheetState.show()
-                        }*/
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = defaultSelectedCurrency.to,
-                        style = TextStyle(
-                            textAlign = TextAlign.Center,
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily(Font(R.font.montserrat_bold, FontWeight.W300)),
-                            color = colorResource(id = R.color.color_header_text)
+                Spacer(modifier = Modifier.height(32.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            colorResource(id = R.color.to_light_green),
+                            shape = RoundedCornerShape(12.dp)
                         )
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Icon(
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                        painter = painterResource(id = R.drawable.round_keyboard_arrow_down_24),
-                        contentDescription = "arrow_down",
-                        tint = colorResource(id = R.color.color_header_text)
-                    )
-
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .align(alignment = CenterHorizontally),
+                            text = "1 ${rateConversionUiState.rateConverter.query.from} = ${rateConversionUiState.rateConverter.result} ${rateConversionUiState.rateConverter.query.to}",
+                            style = TextStyle(
+                                textAlign = TextAlign.Start,
+                                fontFamily = FontFamily(
+                                    Font(
+                                        R.font.montserrat_bold,
+                                        FontWeight.W400
+                                    )
+                                ),
+                                fontSize = 22.sp,
+                                color = colorResource(id = R.color.color_header_text)
+                            )
+                        )
+                        Text(
+                            modifier = Modifier
+                                .align(alignment = CenterHorizontally),
+                            text = rateConversionUiState.rateConverter.info.rate.toString().plus(" ")
+                                .plus("pas month"), style = TextStyle(
+                                textAlign = TextAlign.Start,
+                                fontFamily = FontFamily(
+                                    Font(
+                                        R.font.montserrat_medium,
+                                        FontWeight.W200
+                                    )
+                                ),
+                                fontSize = 14.sp,
+                                color = colorResource(id = R.color.background_color)
+                            )
+                        )
+                    }
                 }
+                /* Spacer(modifier = Modifier.height(40.dp))
+                 LineChartView(timeSeriesState = timeSeriesUiState)*/
             }
-        }
-        Spacer(modifier = Modifier.height(32.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    colorResource(id = R.color.to_light_green),
-                    shape = RoundedCornerShape(12.dp)
-                )
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .align(alignment = CenterHorizontally),
-                    text = "1 ${defaultSelectedCurrency.from} = ${defaultSelectedCurrency.rate} ${defaultSelectedCurrency.to}",
-                    style = TextStyle(
-                        textAlign = TextAlign.Start,
-                        fontFamily = FontFamily(Font(R.font.montserrat_bold, FontWeight.W400)),
-                        fontSize = 22.sp,
-                        color = colorResource(id = R.color.color_header_text)
-                    )
-                )
-                Text(
-                    modifier = Modifier
-                        .align(alignment = CenterHorizontally),
-                    text = changeRateValue, style = TextStyle(
-                        textAlign = TextAlign.Start,
-                        fontFamily = FontFamily(Font(R.font.montserrat_medium, FontWeight.W200)),
-                        fontSize = 14.sp,
-                        color = colorResource(id = R.color.background_color)
-                    )
-                )
-            }
-        }
 
-        Spacer(modifier = Modifier.height(40.dp))
-        LineChartView(timeSeriesState = fluctuationState)
+            is ConvertRatesUiState.Error -> {
+
+            }
+        }
 
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CurrencyListComposable(currencyList: List<CommonCurrency>) {
+fun CurrencyListComposable(
+    sheetState: ModalBottomSheetState,
+    scope: CoroutineScope,
+    currencyList: List<CommonCurrency>,
+    isFromCountrySelected: Boolean,
+    fromCountryChange: (String) -> Unit,
+    toCountryChange: (String) -> Unit,
+    getRates:(String)-> Unit
+) {
     val listState = rememberLazyListState()
     var selectedItem by remember { mutableStateOf("") }
     LazyColumn(
@@ -362,6 +418,16 @@ fun CurrencyListComposable(currencyList: List<CommonCurrency>) {
                 .selectable(
                     selected = selectedItem == currencyList[it].name, onClick = {
                         selectedItem = currencyList[it].name
+                        if (isFromCountrySelected) {
+                            fromCountryChange(currencyList[it].code)
+                            getRates(currencyList[it].code)
+                        } else {
+                            toCountryChange(currencyList[it].code)
+
+                        }
+
+                        // currencyViewModel.rateConversion
+                        scope.launch { sheetState.hide() }
                     }
                 )) {
                 Text(
@@ -415,8 +481,14 @@ fun LineChartView(timeSeriesState: TimeSeriesUiState) {
                 ),
                 modifier = Modifier.fillMaxSize(),
                 animation = simpleChartAnimation(),
-                pointDrawer = FilledCircularPointDrawer(diameter = 8.dp,colorResource(id = R.color.background_color)),
-                lineDrawer = SolidLineDrawer(thickness = 2.dp, colorResource(id = R.color.light_green)),
+                pointDrawer = FilledCircularPointDrawer(
+                    diameter = 8.dp,
+                    colorResource(id = R.color.background_color)
+                ),
+                lineDrawer = SolidLineDrawer(
+                    thickness = 2.dp,
+                    colorResource(id = R.color.light_green)
+                ),
                 xAxisDrawer = SimpleXAxisDrawer(),
                 yAxisDrawer = SimpleYAxisDrawer(),
                 horizontalOffset = 5f

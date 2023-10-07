@@ -1,4 +1,4 @@
-package com.codecollapse.currencyconverter.core.ui.fluctuation
+package com.codecollapse.currencyconverter.core.ui.timeseries
 
 import com.codecollapse.currencyconverter.data.model.currency.timeseries.TimeSeries
 

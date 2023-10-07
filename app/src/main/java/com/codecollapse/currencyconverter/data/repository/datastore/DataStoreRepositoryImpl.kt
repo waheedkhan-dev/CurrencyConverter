@@ -10,7 +10,9 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl.PreferencesKey.AMOUNT
 import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl.PreferencesKey.DEFAULT_BASE_CURRENCY
 import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl.PreferencesKey.DEFAULT_TARGET_CURRENCY
+import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl.PreferencesKey.FROM_COUNTRY
 import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl.PreferencesKey.IS_DEVICE_SYNC_WITH_API
+import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl.PreferencesKey.TO_COUNTRY
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -23,6 +25,8 @@ class DataStoreRepositoryImpl @Inject constructor(private val ccDataStore: DataS
         val DEFAULT_BASE_CURRENCY = stringPreferencesKey("defaultBaseCurrency")
         val DEFAULT_TARGET_CURRENCY = stringPreferencesKey("defaultTargetCurrency")
         val IS_DEVICE_SYNC_WITH_API = booleanPreferencesKey("isDeviceSyncWithAPI")
+        val FROM_COUNTRY = stringPreferencesKey("fromCountry")
+        val TO_COUNTRY = stringPreferencesKey("toCountry")
         val AMOUNT = intPreferencesKey("amount")
     }
 
@@ -35,6 +39,18 @@ class DataStoreRepositoryImpl @Inject constructor(private val ccDataStore: DataS
     override suspend fun setTargetCurrency(targetCurrency: String) {
         ccDataStore.edit { pref ->
             pref[DEFAULT_TARGET_CURRENCY] = targetCurrency
+        }
+    }
+
+    override suspend fun setFromCountry(country: String) {
+        ccDataStore.edit { pref ->
+            pref[FROM_COUNTRY] = country
+        }
+    }
+
+    override suspend fun setToCountry(country: String) {
+        ccDataStore.edit { pref ->
+            pref[TO_COUNTRY] = country
         }
     }
 
@@ -89,6 +105,51 @@ class DataStoreRepositoryImpl @Inject constructor(private val ccDataStore: DataS
                 }
                 .map { preferences ->
                     preferences[DEFAULT_TARGET_CURRENCY]
+                }
+            val value = flow.firstOrNull() ?: "GBP"
+            value
+        }
+    }
+
+    override suspend fun getFromCountry(): Result<String> {
+        return Result.runCatching {
+            val flow = ccDataStore.data
+                .catch { exception ->
+                    /*
+                     * dataStore.data throws an IOException when an error
+                     * is encountered when reading data
+                     */
+                    if (exception is IOException) {
+                        emit(emptyPreferences())
+                    } else {
+                        throw exception
+                    }
+                }
+                .map { preferences ->
+                    // Get our name value, defaulting to "" if not set
+                    preferences[FROM_COUNTRY]
+                }
+            val value = flow.firstOrNull() ?: "USD" // we only care about the 1st value
+            value
+        }
+    }
+
+    override suspend fun getToCountry(): Result<String> {
+        return Result.runCatching {
+            val flow = ccDataStore.data
+                .catch { exception ->
+                    /*
+                     * dataStore.data throws an IOException when an error
+                     * is encountered when reading data
+                     */
+                    if (exception is IOException) {
+                        emit(emptyPreferences())
+                    } else {
+                        throw exception
+                    }
+                }
+                .map { preferences ->
+                    preferences[TO_COUNTRY]
                 }
             val value = flow.firstOrNull() ?: "GBP"
             value
