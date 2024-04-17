@@ -1,10 +1,8 @@
-package com.codecollapse.currencyconverter.navigation
+package com.codecollapse.currencyconverter.ui.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.codecollapse.currencyconverter.R
-import com.codecollapse.currencyconverter.core.DestinationRoute.CONVERT_SCREEN_ROUTE
-import com.codecollapse.currencyconverter.core.DestinationRoute.CHART_SCREEN_ROUTE
 
 enum class BottomBarDestination(
     val route: String,
@@ -15,14 +13,14 @@ enum class BottomBarDestination(
 ) {
 
     CONVERT(
-        route = CONVERT_SCREEN_ROUTE,
+        route = Destinations.HomeScreen.route,
         title = R.string.convert,
         unFilledIcon = R.drawable.outline_sync_alt_24,
         filledIcon = R.drawable.outline_sync_alt_24
     ),
 
     RATE(
-        route = CHART_SCREEN_ROUTE,
+        route = Destinations.ChartScreen.route,
         title = R.string.chart,
         unFilledIcon = R.drawable.outline_timeline_24,
         filledIcon = R.drawable.outline_timeline_24

@@ -1,4 +1,4 @@
-package com.codecollapse.currencyconverter.screens.currency
+package com.codecollapse.currencyconverter.ui.screens.currency
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,20 +17,18 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
@@ -43,25 +41,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.codecollapse.currencyconverter.R
-import com.codecollapse.currencyconverter.core.DestinationRoute.CONVERT_SCREEN_ROUTE
 import com.codecollapse.currencyconverter.data.model.currency.CommonCurrency
 import com.codecollapse.currencyconverter.data.model.currency.Currency
 
 @Composable
 fun CountryRoute(
-    navController: NavController,
     isChangingCurrency: Boolean,
-    currencyViewModel: CurrencyViewModel = hiltViewModel(),
+    defaultSelectedCurrency: Currency,
+    list: Array<CommonCurrency>,
+    updateCurrency: (String) -> Unit,
+    addCurrency: (String, String, String, String) -> Unit
 ) {
-    LaunchedEffect(Unit) {
-        currencyViewModel.getCurrency(true)
-    }
-    val list = currencyViewModel.getCurrencyList()
-    val defaultSelectedCurrency by currencyViewModel.defaultCurrency.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -80,32 +72,38 @@ fun CountryRoute(
             )
         )
         Spacer(modifier = Modifier.height(20.dp))
-        var searchQuery by remember { mutableStateOf("") }
+        var searchQuery by rememberSaveable { mutableStateOf("") }
         SearchEditText(onSearchQueryChange = { newQuery ->
             searchQuery = newQuery
             // Perform search operation with newQuery
         })
-        val filteredList = list.filter { currency ->
-            currency.name.contains(searchQuery, ignoreCase = true)
-        }
-        if (filteredList.isEmpty().not()) {
-            CountryRow(
-                currencyList = filteredList,
-                navController = navController,
-                isChangingCurrency = isChangingCurrency,
-                currencyViewModel,
-                defaultSelectedCurrency
 
-            )
-        } else {
-            CountryRow(
-                currencyList = list.toList(),
-                navController = navController,
-                isChangingCurrency = isChangingCurrency,
-                currencyViewModel,
-                defaultSelectedCurrency
-            )
+
+        val filteredList = list.filter { currency ->
+            currency.name.contains(searchQuery, ignoreCase = true) ||
+                    currency.code.contains(searchQuery, ignoreCase = true) ||
+                    currency.symbol.contains(searchQuery, ignoreCase = true)
+        }.sortedByDescending { currency ->
+            when {
+                currency.name.equals(searchQuery, ignoreCase = true) -> 3 // Exact match on name
+                currency.name.contains(searchQuery, ignoreCase = true) -> 2 // Partial match on name
+                currency.code.equals(searchQuery, ignoreCase = true) -> 2 // Exact match on code
+                currency.code.contains(searchQuery, ignoreCase = true) -> 1 // Partial match on code
+                else -> 0
+            }
         }
+
+        CountryRow(
+            currencyList = filteredList.ifEmpty { list.toList() },
+            isChangingCurrency = isChangingCurrency,
+            defaultSelectedCurrency = defaultSelectedCurrency,
+            updateCurrency = { code ->
+                updateCurrency(code)
+            },
+            addCurrency = { name, code, symbol, isoCode ->
+                addCurrency(name, code, symbol, isoCode)
+            }
+        )
     }
 
 }
@@ -113,13 +111,12 @@ fun CountryRoute(
 @Composable
 fun CountryRow(
     currencyList: List<CommonCurrency>,
-    navController: NavController,
     isChangingCurrency: Boolean,
-    currencyViewModel: CurrencyViewModel,
-    defaultSelectedCurrency : Currency
+    defaultSelectedCurrency: Currency,
+    updateCurrency: (String) -> Unit,
+    addCurrency: (String, String, String, String) -> Unit
 ) {
     val listState = rememberLazyListState()
-    var selectedItem by remember { mutableStateOf(false) }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = listState,
@@ -132,18 +129,20 @@ fun CountryRow(
                 .fillMaxWidth()
                 .clickable {
                     if (isChangingCurrency) {
-                        currencyViewModel.updatedBaseCurrency(currencyList[it].code)
+                        updateCurrency(currencyList[it].code)
+                        //  currencyViewModel.updatedBaseCurrency(currencyList[it].code)
                     } else {
-                        if(defaultSelectedCurrency.isoCode!=currencyList[it].isoCode){
-                            currencyViewModel.addCurrency(
-                                name = currencyList[it].name, code = currencyList[it].code,
-                                symbol = currencyList[it].symbol,
-                                isoCode = currencyList[it].isoCode
+                        if (defaultSelectedCurrency.isoCode != currencyList[it].isoCode) {
+                            addCurrency(
+                                currencyList[it].name, currencyList[it].code,
+                                currencyList[it].symbol,
+                                currencyList[it].isoCode
                             )
+
                         }
                     }
 
-                    navController.popBackStack(CONVERT_SCREEN_ROUTE, inclusive = false)
+                    //  navController.popBackStack(Destinations.HomeScreen.route, inclusive = false)
                 }) {
                 Text(
                     text = "${currencyList[it].code}  -  ", style = TextStyle(
@@ -168,7 +167,6 @@ fun CountryRow(
 
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SearchEditText(onSearchQueryChange: (String) -> Unit) {
     var searchQuery by remember { mutableStateOf("") }
@@ -223,7 +221,7 @@ fun SearchEditText(onSearchQueryChange: (String) -> Unit) {
                     }
                 }
             },
-            colors = TextFieldDefaults.textFieldColors(
+            colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             )

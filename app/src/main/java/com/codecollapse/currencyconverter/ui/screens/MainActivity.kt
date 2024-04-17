@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.codecollapse.currencyconverter.screens
+package com.codecollapse.currencyconverter.ui.screens
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

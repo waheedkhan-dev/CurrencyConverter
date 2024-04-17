@@ -4,7 +4,6 @@ import com.codecollapse.currencyconverter.data.model.currency.timeseries.TimeSer
 
 sealed interface TimeSeriesUiState {
     data class Success(val timeSeries: List<TimeSeries>) : TimeSeriesUiState
-
-    object Error : TimeSeriesUiState
-    object Loading : TimeSeriesUiState
+    data object Error : TimeSeriesUiState
+    data object Loading : TimeSeriesUiState
 }

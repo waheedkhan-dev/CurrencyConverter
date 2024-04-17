@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import timber.log.Timber
 import javax.inject.Inject
 
 class RateConverterRepositoryImpl @Inject constructor(
@@ -18,11 +19,14 @@ class RateConverterRepositoryImpl @Inject constructor(
         amount: Int
     ): Flow<RateConverter> {
         return flow {
-            val response =
-                currencyApi.rateConversion(api_key = api_key, from = from, to = to, amount = amount)
-            if (response.isSuccessful) {
+            try {
+                val response =
+                    currencyApi.rateConversion(api_key = api_key, from = from, to = to, amount = amount)
                 emit(response.body()!!)
+            }catch (ex : Exception){
+                Timber.i("exception : ${ex.message}")
             }
+
         }.flowOn(IO)
     }
 }

@@ -1,10 +1,9 @@
-package com.codecollapse.currencyconverter.screens
+package com.codecollapse.currencyconverter.ui.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codecollapse.currencyconverter.data.repository.datastore.DataStoreRepositoryImpl
 import com.codecollapse.currencyconverter.data.repository.exchange.ExchangeRateRepositoryImpl
-import com.codecollapse.currencyconverter.data.repository.rate.RateConverterRepositoryImpl
 import com.codecollapse.currencyconverter.utils.Constants
 import com.codecollapse.currencyconverter.utils.Resource
 import com.codecollapse.currencyconverter.utils.asResource

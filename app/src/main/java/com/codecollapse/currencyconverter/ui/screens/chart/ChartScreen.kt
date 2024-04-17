@@ -1,4 +1,6 @@
-package com.codecollapse.currencyconverter.screens.chart
+@file:OptIn(ExperimentalMaterialApi::class)
+
+package com.codecollapse.currencyconverter.ui.screens.chart
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,7 +32,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,15 +50,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.codecollapse.currencyconverter.R
 import com.codecollapse.currencyconverter.core.ui.convert.ConvertRatesUiState
 import com.codecollapse.currencyconverter.core.ui.timeseries.TimeSeriesUiState
 import com.codecollapse.currencyconverter.data.model.currency.CommonCurrency
-import com.codecollapse.currencyconverter.screens.currency.CurrencyViewModel
-import com.codecollapse.currencyconverter.screens.currency.SearchEditText
+import com.codecollapse.currencyconverter.ui.screens.currency.SearchEditText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.bytebeats.views.charts.line.LineChart
@@ -68,28 +65,16 @@ import me.bytebeats.views.charts.line.render.xaxis.SimpleXAxisDrawer
 import me.bytebeats.views.charts.line.render.yaxis.SimpleYAxisDrawer
 import me.bytebeats.views.charts.simpleChartAnimation
 
-@ExperimentalMaterialApi
-@Composable
-fun ChartRoute(
-    navController: NavController,
-    currencyViewModel: CurrencyViewModel = hiltViewModel()
-) {
-    LaunchedEffect(Unit){
-        currencyViewModel.getRateConversion()
-    }
-    val rateConversionUiState by currencyViewModel.rateConversion
-        .collectAsStateWithLifecycle()
-    val currencyList = currencyViewModel.getCurrencyList()
-    BottomSheet(currencyList.toList(), rateConversionUiState, currencyViewModel)
 
-}
-
-@ExperimentalMaterialApi
 @Composable
-private fun BottomSheet(
-    currency: List<CommonCurrency>,
+fun ChartScreen(
     rateConversionUiState: ConvertRatesUiState,
-    currencyViewModel: CurrencyViewModel
+    timeSeriesState: TimeSeriesUiState,
+    currencyList : Array<CommonCurrency>,
+    isFromCountrySelected : Boolean,
+    setIsFromCountrySelected: (Boolean) -> Unit,
+    fromCountryChange: (String) -> Unit,
+    toCountryChange: (String) -> Unit
 ) {
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -138,41 +123,52 @@ private fun BottomSheet(
                     searchQuery = newQuery
                     // Perform search operation with newQuery
                 })
-                val filteredList = currency.filter { currency ->
-                    currency.name.contains(searchQuery, ignoreCase = true)
+
+                val filteredList = currencyList.filter { currency ->
+                    currency.name.contains(searchQuery, ignoreCase = true) ||
+                            currency.code.contains(searchQuery, ignoreCase = true) ||
+                            currency.symbol.contains(searchQuery, ignoreCase = true)
+                }.sortedByDescending { currency ->
+                    when {
+                        currency.name.equals(searchQuery, ignoreCase = true) -> 3 // Exact match on name
+                        currency.name.contains(searchQuery, ignoreCase = true) -> 2 // Partial match on name
+                        currency.code.equals(searchQuery, ignoreCase = true) -> 2 // Exact match on code
+                        currency.code.contains(searchQuery, ignoreCase = true) -> 1 // Partial match on code
+                        else -> 0
+                    }
                 }
-                if (filteredList.isEmpty().not()) {
-                    CurrencyListComposable(
-                        sheetState = modalSheetState,
-                        scope = scope,
-                        currencyList = filteredList,
-                        isFromCountrySelected = currencyViewModel.isFromCountrySelected.value,
-                        currencyViewModel::setFromCountry,
-                        currencyViewModel::setToCountry,
-                        currencyViewModel::getRateConversion
-                    )
-                } else {
-                    CurrencyListComposable(
-                        sheetState = modalSheetState,
-                        scope = scope,
-                        currencyList = currency,
-                        isFromCountrySelected = currencyViewModel.isFromCountrySelected.value,
-                        currencyViewModel::setFromCountry,
-                        currencyViewModel::setToCountry,
-                        currencyViewModel::getRateConversion
-                    )
-                }
+
+
+                CurrencyListComposable(
+                    sheetState = modalSheetState,
+                    scope = scope,
+                    currencyList = filteredList.ifEmpty { currencyList.toList() },
+                    isFromCountrySelected = isFromCountrySelected,
+                    fromCountryChange = {
+                        fromCountryChange(it)
+                    }, toCountryChange = {
+                        toCountryChange(it)
+                    }
+
+                )
             }
         }
     ) {
         DrawChartComposable(
-            modalSheetState,
-            scope,
-            rateConversionUiState,
-            currencyViewModel::setIsFromCountrySelected
+            sheetState = modalSheetState,
+            scope = scope,
+            rateConversionUiState = rateConversionUiState,
+            timeSeriesState = timeSeriesState,
+            setIsFromCountrySelected = {
+                setIsFromCountrySelected(it)
+            }
         )
     }
+
+
 }
+
+
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -180,13 +176,13 @@ fun DrawChartComposable(
     sheetState: ModalBottomSheetState,
     scope: CoroutineScope,
     rateConversionUiState: ConvertRatesUiState,
-    setIsFromCountrySelected: (Boolean) ->Unit
+    timeSeriesState: TimeSeriesUiState,
+    setIsFromCountrySelected: (Boolean) -> Unit
 ) {
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(12.dp)
             .background(color = colorResource(id = R.color.card_background_color))
     ) {
         Spacer(modifier = Modifier.height(8.dp))
@@ -335,6 +331,7 @@ fun DrawChartComposable(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(horizontal = 12.dp)
                         .background(
                             colorResource(id = R.color.to_light_green),
                             shape = RoundedCornerShape(12.dp)
@@ -365,7 +362,8 @@ fun DrawChartComposable(
                         Text(
                             modifier = Modifier
                                 .align(alignment = CenterHorizontally),
-                            text = rateConversionUiState.rateConverter.info.rate.toString().plus(" ")
+                            text = rateConversionUiState.rateConverter.info.rate.toString()
+                                .plus(" ")
                                 .plus("pas month"), style = TextStyle(
                                 textAlign = TextAlign.Start,
                                 fontFamily = FontFamily(
@@ -380,8 +378,8 @@ fun DrawChartComposable(
                         )
                     }
                 }
-                /* Spacer(modifier = Modifier.height(40.dp))
-                 LineChartView(timeSeriesState = timeSeriesUiState)*/
+                 Spacer(modifier = Modifier.height(40.dp))
+                 LineChartView(timeSeriesState = timeSeriesState)
             }
 
             is ConvertRatesUiState.Error -> {
@@ -400,8 +398,7 @@ fun CurrencyListComposable(
     currencyList: List<CommonCurrency>,
     isFromCountrySelected: Boolean,
     fromCountryChange: (String) -> Unit,
-    toCountryChange: (String) -> Unit,
-    getRates:(String)-> Unit
+    toCountryChange: (String) -> Unit
 ) {
     val listState = rememberLazyListState()
     var selectedItem by remember { mutableStateOf("") }
@@ -420,10 +417,8 @@ fun CurrencyListComposable(
                         selectedItem = currencyList[it].name
                         if (isFromCountrySelected) {
                             fromCountryChange(currencyList[it].code)
-                            getRates(currencyList[it].code)
                         } else {
                             toCountryChange(currencyList[it].code)
-
                         }
 
                         // currencyViewModel.rateConversion

@@ -1,4 +1,4 @@
-package com.codecollapse.currencyconverter.screens.currency
+package com.codecollapse.currencyconverter.ui.screens.currency
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -13,6 +13,7 @@ import com.codecollapse.currencyconverter.data.repository.rate.RateConverterRepo
 import com.codecollapse.currencyconverter.utils.Constants
 import com.codecollapse.currencyconverter.utils.Resource
 import com.codecollapse.currencyconverter.utils.asResource
+import com.codecollapse.currencyconverter.utils.getDateFromMill
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,9 +23,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,6 +38,13 @@ class CurrencyViewModel @Inject constructor(
     private val dataStoreRepositoryImpl: DataStoreRepositoryImpl
 ) :
     ViewModel() {
+
+    private val currentDate = Calendar.getInstance()
+    private var startDateCalendar = Calendar.getInstance()
+
+    init {
+        startDateCalendar.add(Calendar.DAY_OF_MONTH, -6)
+    }
 
     /*private val _changeRateValue = MutableStateFlow("past month")
     var changeRateValue: StateFlow<String> = _changeRateValue.asStateFlow()*/
@@ -47,6 +57,11 @@ class CurrencyViewModel @Inject constructor(
     var defaultCurrency: StateFlow<Currency> = _defaultCurrency.asStateFlow()
     private val _rateConversion = MutableStateFlow<ConvertRatesUiState>(ConvertRatesUiState.Loading)
     var rateConversion: StateFlow<ConvertRatesUiState> = _rateConversion.asStateFlow()
+
+
+    private val _historicalRates= MutableStateFlow<TimeSeriesUiState>(TimeSeriesUiState.Loading)
+    var historicalRates: StateFlow<TimeSeriesUiState> = _historicalRates.asStateFlow()
+
     fun getCurrencyList() = commonCurrencyRepository.getCurrencyList()
 
     fun addCurrency(name: String, code: String, symbol: String, isoCode: String) {
@@ -88,6 +103,7 @@ class CurrencyViewModel @Inject constructor(
 
                     is Resource.Success -> {
                         // _changeRateValue.value = "${it.data.first().rates} past month"
+
                         _rateConversion.value = ConvertRatesUiState.Success(it.data)
 
                     }
@@ -98,68 +114,47 @@ class CurrencyViewModel @Inject constructor(
 
                     }
                 }
-            }
+            }.collect{}
         }
 
     }
 
-    /* val rateConversion: StateFlow<ConvertRatesUiState> =
-         rateConverterRepositoryImpl.rateConversion(
-             Constants.API_KEY,
-             runBlocking { dataStoreRepositoryImpl.getFromCountry().getOrNull() }!!,
-             runBlocking { dataStoreRepositoryImpl.getToCountry().getOrNull() }!!,
-             1
-         ).asResource().map {
-             when (it) {
-                 is Resource.Loading -> {
-                     ConvertRatesUiState.Loading
-                 }
+    fun getHistoricalRates(fromCountry: String = _fromCountry, toCountry: String = _toCountry){
+        viewModelScope.launch {
+            commonCurrencyRepository.checkTimeSeries(
+                Constants.API_KEY,
+                fromCountry,
+                toCountry,
+                getDateFromMill(startDateCalendar.timeInMillis),
+                getDateFromMill(currentDate.timeInMillis)
+            ).asResource().map { resource ->
+                when (resource) {
+                    is Resource.Loading -> {
+                        _historicalRates.update {
+                            TimeSeriesUiState.Loading
+                        }
+                    }
 
-                 is Resource.Success -> {
-                    // _changeRateValue.value = "${it.data.first().rates} past month"
-                     ConvertRatesUiState.Success(it.data)
-                 }
+                    is Resource.Success -> {
+                        _historicalRates.update {
+                            TimeSeriesUiState.Success(resource.data)
+                        }
+                        //    _changeRateValue.value = "${it.data.first().rates} past month"
 
-                 is Resource.Error -> {
-                     Timber.d("FluctuationUiState.Error ${it.exception!!.message}")
-                     ConvertRatesUiState.Error
-                 }
-             }
-         }.stateIn(
-             scope = viewModelScope,
-             started = SharingStarted.WhileSubscribed(5_000),
-             initialValue = ConvertRatesUiState.Loading
-         )*/
+                    }
 
+                    is Resource.Error -> {
+                        Timber.d("FluctuationUiState.Error ${resource.exception!!.message}")
+                        _historicalRates.update {
+                            TimeSeriesUiState.Error
+                        }
 
-    val timeSeriesUiState: StateFlow<TimeSeriesUiState> =
-        commonCurrencyRepository.checkTimeSeries(
-            Constants.API_KEY,
-            runBlocking { dataStoreRepositoryImpl.getBaseCurrency().getOrNull() }!!,
-            runBlocking { dataStoreRepositoryImpl.getTargetCurrency().getOrNull() }!!,
-            Constants.START_DATE,
-            Constants.END_DATE
-        ).asResource().map {
-            when (it) {
-                is Resource.Loading -> {
-                    TimeSeriesUiState.Loading
+                    }
                 }
+            }.collect{}
+        }
 
-                is Resource.Success -> {
-                    //    _changeRateValue.value = "${it.data.first().rates} past month"
-                    TimeSeriesUiState.Success(it.data)
-                }
-
-                is Resource.Error -> {
-                    Timber.d("FluctuationUiState.Error ${it.exception!!.message}")
-                    TimeSeriesUiState.Error
-                }
-            }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = TimeSeriesUiState.Loading
-        )
+    }
 
     fun setFromCountry(code: String) {
         viewModelScope.launch(IO) {

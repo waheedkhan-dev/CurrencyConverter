@@ -50,26 +50,31 @@ class CommonCurrencyRepository @Inject constructor(
         end_date: String
     ): Flow<List<TimeSeries>> {
         return flow {
-            val response =
-                currencyApi.checkTimeSeries(api_key, baseCurrency, symbols, start_date, end_date)
-            if (response.isSuccessful) {
+            try {
+                val response =
+                    currencyApi.checkTimeSeries(api_key, baseCurrency, symbols, start_date, end_date)
+                if (response.isSuccessful) {
 
-                val timeSeries = arrayListOf<TimeSeries>()
-                val jsonString = response.body()!!.string()
-                val jsonObject = JSONObject(jsonString)
-                val ratesObject = jsonObject.getJSONObject("rates")
-                ratesObject.keys().forEach { date->
-                    val timeSeriesDate = ratesObject.getJSONObject(date)
-                    timeSeriesDate.keys().forEach {
-                        val rates : Float = timeSeriesDate.getString(it).toFloat()
-                        timeSeries.add(TimeSeries(rates = rates, date = date))
-                        Timber.i("current rates $rates")
+                    val timeSeries = arrayListOf<TimeSeries>()
+                    val jsonString = response.body()!!.string()
+                    val jsonObject = JSONObject(jsonString)
+                    val ratesObject = jsonObject.getJSONObject("rates")
+                    ratesObject.keys().forEach { date->
+                        val timeSeriesDate = ratesObject.getJSONObject(date)
+                        timeSeriesDate.keys().forEach {
+                            val rates : Float = timeSeriesDate.getString(it).toFloat()
+                            timeSeries.add(TimeSeries(rates = rates, date = date))
+                            Timber.i("current rates $rates")
+                        }
                     }
-                }
 
-                emit(timeSeries)
-              //  emit(CurrencyFluctuation("","",true, Rates(USD(0.0,0.0,0.0,0.0)),"",true))
+                    emit(timeSeries)
+                    //  emit(CurrencyFluctuation("","",true, Rates(USD(0.0,0.0,0.0,0.0)),"",true))
+                }
+            }catch (ex : Exception){
+                Timber.i("exception occur ${ex.message}")
             }
+
         }
     }
 

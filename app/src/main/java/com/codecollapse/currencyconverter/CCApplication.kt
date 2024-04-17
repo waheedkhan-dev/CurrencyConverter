@@ -24,7 +24,7 @@ open class CCApplication : Application(), Configuration.Provider {
         super.onCreate()
         World.init(applicationContext)
         setTimberConfiguration()
-      //  setUpPeriodicWorkRequest()
+        setUpPeriodicWorkRequest()
     }
 
     protected open fun setTimberConfiguration() {

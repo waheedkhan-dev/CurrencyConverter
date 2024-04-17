@@ -1,4 +1,4 @@
-package com.codecollapse.currencyconverter.screens
+package com.codecollapse.currencyconverter.ui.screens.home
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -23,7 +23,7 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
-class ExchangeRateViewModel @Inject constructor(
+class HomeViewModel @Inject constructor(
     private val dataStoreRepositoryImpl: DataStoreRepositoryImpl,
     private val commonCurrencyRepository: CommonCurrencyRepository
 ) : ViewModel() {
@@ -45,7 +45,6 @@ class ExchangeRateViewModel @Inject constructor(
                    if(it.data.isEmpty().not()){
                         currencies.value = it.data
                         _fromCountryCode.value = currencies.value.first().from
-                       // _enterAmount.value = currencies.value.first().amount
 
                     }
                     RateConverterUiState.Success(it.data.toList())

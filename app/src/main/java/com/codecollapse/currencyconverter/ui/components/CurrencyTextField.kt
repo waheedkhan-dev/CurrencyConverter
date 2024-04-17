@@ -1,4 +1,4 @@
-package com.codecollapse.currencyconverter.components
+package com.codecollapse.currencyconverter.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,15 +35,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.codecollapse.currencyconverter.R
-import com.codecollapse.currencyconverter.screens.ExchangeRateViewModel
+import com.codecollapse.currencyconverter.ui.screens.home.HomeViewModel
 
 
 @Composable
 fun RateConvertComposable(
-    navController: NavController,
     amount: Int,
     fromCountry: String,
-    exchangeRateViewModel: ExchangeRateViewModel
+    onValueChange : (String) ->Unit,
+    onCardClicked : () ->Unit,
 ) {
     val focusManager = LocalFocusManager.current
     var updatedValue by remember { mutableStateOf(amount.toString()) }
@@ -64,7 +64,8 @@ fun RateConvertComposable(
 
             Box(
                 modifier = Modifier.clickable {
-                    navController.navigate("currency_screen_route/".plus(true))
+                    onCardClicked()
+                  //  navController.navigate("currency_screen_route/".plus(true))
                 },
                 contentAlignment = Alignment.Center
             ) {
@@ -107,7 +108,8 @@ fun RateConvertComposable(
                 ),
                 keyboardActions = KeyboardActions(onDone = {
                     if (updatedValue.isNotBlank()) {
-                        exchangeRateViewModel.updateRates(updatedValue.toInt())
+                        onValueChange(updatedValue)
+                     //   homeViewModel.updateRates(updatedValue.toInt())
                         focusManager.clearFocus()
                     }
                 })

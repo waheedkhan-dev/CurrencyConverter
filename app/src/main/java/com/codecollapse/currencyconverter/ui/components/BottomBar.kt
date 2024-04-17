@@ -1,4 +1,4 @@
-package com.codecollapse.currencyconverter.components
+package com.codecollapse.currencyconverter.ui.components
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.Icon
@@ -18,7 +18,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.codecollapse.currencyconverter.R
-import com.codecollapse.currencyconverter.navigation.BottomBarDestination
+import com.codecollapse.currencyconverter.ui.navigation.BottomBarDestination
 
 
 @Composable

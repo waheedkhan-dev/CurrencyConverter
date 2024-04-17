@@ -1,4 +1,4 @@
-package com.codecollapse.currencyconverter.screens.convert
+package com.codecollapse.currencyconverter.ui.screens.home
 
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -22,17 +22,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -48,34 +45,33 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.blongho.country_data.World
 import com.codecollapse.currencyconverter.R
-import com.codecollapse.currencyconverter.components.RateConvertComposable
 import com.codecollapse.currencyconverter.core.ui.convert.RateConverterUiState
 import com.codecollapse.currencyconverter.data.model.currency.Currency
-import com.codecollapse.currencyconverter.screens.ExchangeRateViewModel
+import com.codecollapse.currencyconverter.ui.components.RateConvertComposable
 import com.codecollapse.currencyconverter.utils.previewProvider.CurrencyProvider
 import timber.log.Timber
 
 @Composable
-fun RateConverterRoute(
-    navController: NavController,
-    exchangeRateViewModel: ExchangeRateViewModel = hiltViewModel()
+fun HomeScreen(
+    rateConverterUiState: RateConverterUiState,
+    currenciesList: List<Currency>,
+    amount: Int,
+    fromCountryCode: String,
+    onCardClicked: (Boolean) -> Unit,
+    onAddCurrencyButtonClicked: (Boolean) -> Unit,
+    onLongPress: (String) -> Unit,
+    onValueChanged: (String) -> Unit
+
 ) {
 
-    val rateConverterUiState by exchangeRateViewModel.rateConverterUiState
-        .collectAsStateWithLifecycle()
-    val enterAmount by exchangeRateViewModel.enterAmount.collectAsStateWithLifecycle()
-    val fromCountryCode by exchangeRateViewModel.fromCountryCode.collectAsStateWithLifecycle()
-    val updateValues = exchangeRateViewModel.currencies.value
     val listState = rememberLazyListState()
 
     when (rateConverterUiState) {
@@ -86,12 +82,11 @@ fun RateConverterRoute(
         }
 
         is RateConverterUiState.Success -> {
-            var currencies = (rateConverterUiState as RateConverterUiState.Success).currency
-            if (updateValues.isEmpty().not()) {
-                currencies = updateValues
+            var currencies = rateConverterUiState.currency
+            if (currenciesList.isEmpty().not()) {
+                currencies = currenciesList
             }
             if (currencies.isEmpty().not()) {
-
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
@@ -99,7 +94,7 @@ fun RateConverterRoute(
                 ) {
 
                     item {
-                        Column{
+                        Column {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -126,10 +121,13 @@ fun RateConverterRoute(
                                     )
                                     Spacer(modifier = Modifier.height(18.dp))
                                     RateConvertComposable(
-                                        navController = navController,
-                                        amount = enterAmount,
+                                        amount = amount,
                                         fromCountry = fromCountryCode,
-                                        exchangeRateViewModel = exchangeRateViewModel
+                                        onCardClicked = {
+                                            onCardClicked(true)
+                                        }, onValueChange = {
+                                            onValueChanged(it)
+                                        }
                                     )
                                 }
 
@@ -146,7 +144,10 @@ fun RateConverterRoute(
                                 items(currencies.size) {
                                     AddedCurrencyComposable(
                                         currency = currencies[it],
-                                        exchangeRateViewModel::removeCurrency
+                                        onLongPress = { currency ->
+                                            onLongPress(currency)
+                                        }
+
                                     )
                                 }
                             }
@@ -155,7 +156,8 @@ fun RateConverterRoute(
                                 colors = ButtonDefaults.buttonColors(colorResource(id = R.color.to_light_green)),
                                 shape = RoundedCornerShape(8.dp),
                                 onClick = {
-                                    navController.navigate("currency_screen_route/".plus(false))
+                                    onAddCurrencyButtonClicked(false)
+                                    //  navController.navigate("currency_screen_route/".plus(false))
                                 }) {
                                 Row(
                                     verticalAlignment = CenterVertically,
@@ -203,10 +205,9 @@ fun RateConverterRoute(
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-
 @Composable
 fun AddedCurrencyComposable(
-    @PreviewParameter(CurrencyProvider::class) currency: Currency,
+    currency: Currency,
     onLongPress: (String) -> Unit
 ) {
     val context = LocalContext.current

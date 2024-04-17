@@ -15,34 +15,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.codecollapse.currencyconverter.components.BottomBar
-import com.codecollapse.currencyconverter.navigation.AppNavHost
+import com.codecollapse.currencyconverter.ui.components.BottomBar
+import com.codecollapse.currencyconverter.ui.navigation.AppNavHost
 import com.codecollapse.currencyconverter.ui.theme.CurrencyConverterTheme
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
-
-@OptIn(
-    ExperimentalMaterial3Api::class,
-)
 @Composable
 fun RootScreen() {
     val navController = rememberNavController()
     val currentBackStackEntryAsState by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStackEntryAsState?.destination
-    val context = LocalContext.current
 
     CurrencyConverterTheme() {
         SetupSystemUi(rememberSystemUiController(), colorResource(id = R.color.background_color))
         Scaffold(
-            topBar = {
-                /*TopAppBar(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = {
-                        Text(text = stringResource(id = R.string.convert))
-                    }
-                )*/
-            },
+
             bottomBar = {
                 BottomBar(navController, currentDestination)
             }

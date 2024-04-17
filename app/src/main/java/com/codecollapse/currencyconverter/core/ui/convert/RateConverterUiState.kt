@@ -4,6 +4,6 @@ import com.codecollapse.currencyconverter.data.model.currency.Currency
 
 sealed interface RateConverterUiState {
     data class Success(val currency : List<Currency>) : RateConverterUiState
-    object Error : RateConverterUiState
-    object Loading : RateConverterUiState
+    data object Error : RateConverterUiState
+    data object Loading : RateConverterUiState
 }
