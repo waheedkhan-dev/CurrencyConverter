@@ -8,9 +8,9 @@ The Currency Converter application is designed to demonstrate and promote modern
 <br></br>
 <img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/0f56d3cf-46ad-4d35-b5ed-3eea85ee8aee" alt="screen 1" />
 <img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/e942194f-aeba-4d8d-b83f-55f127ea27da" alt="screen 2" />
-
-<br></br>
 <img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/da70e883-0d31-4638-b192-d1fdb61f5807" alt="screen 3" />
+<br></br>
+
 
 
 
