@@ -3,7 +3,7 @@ The Currency Converter application is designed to demonstrate and promote modern
 <p></p>
 <p></p>
 <h1 alight="left">Note</h1>
-<h3 align="left">Please be aware that the Currency Converter application is still under development, and as a result, you may encounter some bugs or unexpected behavior while using the app. Our development team is actively working to identify and fix any issues that arise to ensure a smooth and reliable user experience.</h3>
+<h3 align="left">Please be aware that the Currency Converter application is still under development, and as a result, you may encounter some bugs or unexpected behavior while using the app. I am actively working to identify and fix any issues that arise to ensure a smooth and reliable user experience.</h3>
 
 <br></br>
 <img align="left" width="300" src="https://github.com/waheedkhan-dev/CurrencyConverter/assets/55230825/0f56d3cf-46ad-4d35-b5ed-3eea85ee8aee" alt="screen 1" />
